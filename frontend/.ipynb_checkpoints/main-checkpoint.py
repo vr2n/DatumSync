@@ -21,7 +21,7 @@ templates = Jinja2Templates(directory="templates")
 # ✅ OAuth configuration
 #config = Config('.env')  # or use `os.environ` directly if already loaded
 
-oauth = OAuth(config)
+oauth = OAuth()
 oauth.register(
     name='google',
     client_id=os.environ.get('GOOGLE_CLIENT_ID'),
