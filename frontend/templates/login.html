@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | DatumSync</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #1d2b64, #f8cdda);
+            color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .login-container h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .login-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #4285F4;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #3367D6;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login to DatumSync</h1>
+        <a class="login-btn" href="/login">Sign in with Google</a>
+    </div>
+</body>
+</html>
