@@ -23,10 +23,12 @@ config = Config(environ=os.environ)
 oauth = OAuth(config)
 oauth.register(
     name='google',
-    client_id=os.getenv("GOOGLE_CLIENT_ID"),
-    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={'scope': 'openid email profile'},
+    client_id='YOUR_CLIENT_ID',
+    client_secret='YOUR_CLIENT_SECRET',
+    access_token_url='https://oauth2.googleapis.com/token',
+    authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
+    api_base_url='https://www.googleapis.com/oauth2/v2/',
+    client_kwargs={'scope': 'openid email profile'}
 )
 
 @app.get("/", response_class=HTMLResponse)
@@ -42,22 +44,21 @@ async def login(request: Request):
 @app.get("/auth/callback")
 async def auth(request: Request):
     try:
+        # Step 1: Exchange the code for token
         token = await oauth.google.authorize_access_token(request)
         print("✅ OAuth token response:", token)
 
-        # Correct: pass the whole token dictionary to parse_id_token
-        user = await oauth.google.parse_id_token(request, token)
+        # ✅ Step 2: Parse id_token from the full token dictionary
+        user_info = await oauth.google.parse_id_token(request, token)
+        print("✅ User info:", user_info)
 
-        # Optional: print user info for debugging
-        print("✅ Google user info:", user)
-
-        # Store user in session
-        request.session["user"] = dict(user)
+        # Step 3: Save user in session
+        request.session["user"] = dict(user_info)
 
         return RedirectResponse(url="/")
 
     except Exception as e:
-        print("❌ Error during auth callback:", str(e))
+        print("❌ Error during auth callback:", e)
         return RedirectResponse(url="/?error=auth_failed")
 
 
