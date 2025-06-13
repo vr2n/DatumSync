@@ -6,6 +6,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.config import Config
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 # ✅ Load environment variables
 load_dotenv()
@@ -53,11 +54,21 @@ async def auth_callback(request: Request):
         userinfo = token.get('userinfo')  # ✅ This is the correct way
         if userinfo:
             request.session['user'] = userinfo
-        return RedirectResponse(url="/")
+        return RedirectResponse(url="/dashboard")
     except Exception as e:
         print("❌ Error during auth callback:", e)
         return RedirectResponse(url="/?error=auth_failed")
 
+@app.get("/dashboard")
+async def dashboard(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "user": user,
+        "now": datetime.utcnow()
+    })
 
 @app.get("/logout")
 async def logout(request: Request):
