@@ -24,13 +24,16 @@ templates = Jinja2Templates(directory="templates")
 oauth = OAuth()
 oauth.register(
     name='google',
-    client_id=os.environ.get('GOOGLE_CLIENT_ID'),
-    client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'),
-    access_token_url='https://oauth2.googleapis.com/token',
+    client_id=os.environ["GOOGLE_CLIENT_ID"],
+    client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
     authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
-    api_base_url='https://openidconnect.googleapis.com/v1/',  # ✅ FIXED
-    client_kwargs={'scope': 'openid email profile'}
+    access_token_url='https://oauth2.googleapis.com/token',
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
 )
+
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
