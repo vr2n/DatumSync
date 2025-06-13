@@ -19,12 +19,13 @@ app.add_middleware(SessionMiddleware, secret_key=os.getenv("SECRET_KEY", "your-d
 templates = Jinja2Templates(directory="templates")
 
 # ✅ OAuth configuration
-config = Config(environ=os.environ)
+config = Config('.env')  # or use `os.environ` directly if already loaded
+
 oauth = OAuth(config)
 oauth.register(
     name='google',
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
+    client_id=config('GOOGLE_CLIENT_ID'),
+    client_secret=config('GOOGLE_CLIENT_SECRET'),
     access_token_url='https://oauth2.googleapis.com/token',
     authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
     api_base_url='https://www.googleapis.com/oauth2/v2/',
