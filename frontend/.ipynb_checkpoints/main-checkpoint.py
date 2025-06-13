@@ -47,21 +47,13 @@ async def login(request: Request):
 
 
 @app.get("/auth/callback")
-async def auth(request: Request):
+async def auth_callback(request: Request):
     try:
-        # Step 1: Exchange the code for token
         token = await oauth.google.authorize_access_token(request)
-        print("✅ OAuth token response:", token)
-
-        # ✅ Step 2: Parse id_token from the full token dictionary
-        user_info = await oauth.google.parse_id_token(request, token)
-        print("✅ User info:", user_info)
-
-        # Step 3: Save user in session
-        request.session["user"] = dict(user_info)
-
+        userinfo = token.get('userinfo')  # ✅ This is the correct way
+        if userinfo:
+            request.session['user'] = userinfo
         return RedirectResponse(url="/")
-
     except Exception as e:
         print("❌ Error during auth callback:", e)
         return RedirectResponse(url="/?error=auth_failed")
