@@ -5,6 +5,10 @@ from authlib.integrations.starlette_client import OAuth
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.config import Config
 import os
+from dotenv import load_dotenv
+
+# ✅ Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
@@ -36,15 +40,19 @@ async def login(request: Request):
 
 @app.get("/auth/callback")
 async def auth(request: Request):
-    token = await oauth.google.authorize_access_token(request)
-    print("OAuth token response:", token)
+    try:
+        token = await oauth.google.authorize_access_token(request)
+        print("OAuth token response:", token)
 
-    # ✅ FIX: Parse only the raw ID token string
-    user = await oauth.google.parse_id_token(request, token["id_token"])
+        user = await oauth.google.parse_id_token(request, token["id_token"])
+        print("User info:", user)
 
-    # Save user info to session
-    request.session["user"] = dict(user)
-    return RedirectResponse(url="/")
+        request.session["user"] = dict(user)
+        return RedirectResponse(url="/")
+    except Exception as e:
+        print("❌ Error during auth callback:", str(e))
+        return HTMLResponse(f"<h2>Authentication failed</h2><p>{str(e)}</p>", status_code=500)
+
 
 
 @app.get("/logout")
