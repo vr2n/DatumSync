@@ -64,10 +64,21 @@ async def dashboard(request: Request):
     user = request.session.get("user")
     if not user:
         return RedirectResponse("/login")
+
+    # Simulated stats data — replace with actual database queries
+    stats = {
+        "normalization": 42,
+        "conversion": 36,
+        "prediction": 29,
+        "validation": 51,
+        "history": 60
+    }
+
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "user": user,
-        "now": datetime.utcnow()
+        "now": datetime.utcnow(),
+        "stats": stats
     })
 
 @app.get("/logout")
