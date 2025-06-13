@@ -12,12 +12,13 @@ load_dotenv()
 
 app = FastAPI()
 
-# Session middleware for storing login sessions
+# ✅ Middleware for session management
 app.add_middleware(SessionMiddleware, secret_key=os.getenv("SECRET_KEY", "your-default-secret-key"))
 
+# ✅ Template setup
 templates = Jinja2Templates(directory="templates")
 
-# Google OAuth setup
+# ✅ OAuth configuration
 config = Config(environ=os.environ)
 oauth = OAuth(config)
 oauth.register(
@@ -42,13 +43,14 @@ async def login(request: Request):
 async def auth(request: Request):
     try:
         token = await oauth.google.authorize_access_token(request)
-        print("OAuth token response:", token)
+        print("✅ OAuth token response:", token)
 
         id_token = token.get("id_token")
         if not id_token:
             raise ValueError("No ID token returned by Google")
 
-        user = await oauth.google.parse_id_token(request, id_token)
+        # ✅ Proper way to pass the id_token as dict
+        user = await oauth.google.parse_id_token(request, {"id_token": id_token})
 
         request.session["user"] = dict(user)
         return RedirectResponse(url="/")
@@ -56,14 +58,6 @@ async def auth(request: Request):
     except Exception as e:
         print("❌ Error during auth callback:", str(e))
         return RedirectResponse(url="/?error=auth_failed")
-
-    
-    except Exception as e:
-        print(f"❌ Error during auth callback: {e}")
-        return HTMLResponse(f"Authentication failed: {e}", status_code=500)
-
-
-
 
 @app.get("/logout")
 async def logout(request: Request):
