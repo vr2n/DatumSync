@@ -36,10 +36,11 @@ async def index(request: Request):
     user = request.session.get("user")
     return templates.TemplateResponse("index.html", {"request": request, "user": user})
 
-@app.get("/login")
+@app.get('/login')
 async def login(request: Request):
-    redirect_uri = request.url_for("auth")
+    redirect_uri = "https://datumsync.onrender.com/auth/callback"
     return await oauth.google.authorize_redirect(request, redirect_uri)
+
 
 @app.get("/auth/callback")
 async def auth(request: Request):
