@@ -38,16 +38,15 @@ async def login(request: Request):
 async def auth(request: Request):
     token = await oauth.google.authorize_access_token(request)
 
-    # Log the full token (optional in dev only)
-    print("Google token:", token)
+    # Debug log (you can also use logging instead of print in production)
+    print("OAuth token response:", token)
 
-    # Check for 'id_token'
     id_token = token.get("id_token")
     if not id_token:
-        raise HTTPException(status_code=400, detail="No ID token found in Google OAuth response")
+        raise HTTPException(status_code=400, detail="Google OAuth response missing ID token.")
 
-    # Now parse the id_token
-    user = await oauth.google.parse_id_token(request, token)
+    # Safely parse the ID token
+    user = await oauth.google.parse_id_token(request, {"id_token": id_token})
     request.session["user"] = dict(user)
     return RedirectResponse(url="/")
 
