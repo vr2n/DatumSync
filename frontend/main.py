@@ -45,19 +45,21 @@ async def auth(request: Request):
         token = await oauth.google.authorize_access_token(request)
         print("✅ OAuth token response:", token)
 
-        id_token = token.get("id_token")
-        if not id_token:
-            raise ValueError("No ID token returned by Google")
+        # Correct: pass the whole token dictionary to parse_id_token
+        user = await oauth.google.parse_id_token(request, token)
 
-        # ✅ Proper way to pass the id_token as dict
-        user = await oauth.google.parse_id_token(request, {"id_token": id_token})
+        # Optional: print user info for debugging
+        print("✅ Google user info:", user)
 
+        # Store user in session
         request.session["user"] = dict(user)
+
         return RedirectResponse(url="/")
-    
+
     except Exception as e:
         print("❌ Error during auth callback:", str(e))
         return RedirectResponse(url="/?error=auth_failed")
+
 
 @app.get("/logout")
 async def logout(request: Request):
