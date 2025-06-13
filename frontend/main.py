@@ -37,13 +37,14 @@ async def login(request: Request):
 @app.get("/auth/callback")
 async def auth(request: Request):
     token = await oauth.google.authorize_access_token(request)
-    print("OAuth token response:", token)  # Should be a dict with 'id_token'
+    print("OAuth token response:", token)
 
-    user = await oauth.google.parse_id_token(request, token)
+    # ✅ FIX: Parse only the raw ID token string
+    user = await oauth.google.parse_id_token(request, token["id_token"])
+
+    # Save user info to session
     request.session["user"] = dict(user)
-
     return RedirectResponse(url="/")
-
 
 
 @app.get("/logout")
