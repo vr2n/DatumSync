@@ -37,8 +37,14 @@ async def login(request: Request):
 @app.get("/auth/callback")
 async def auth(request: Request):
     token = await oauth.google.authorize_access_token(request)
+    
+    # Debug: Log the full token dict
+    if not token or "id_token" not in token:
+        raise HTTPException(status_code=400, detail="ID token not found in response. Please check scope and credentials.")
+    
     user = await oauth.google.parse_id_token(request, token)
     request.session["user"] = dict(user)
+    print("OAuth Token:", token)
     return RedirectResponse(url="/")
 
 @app.get("/logout")
