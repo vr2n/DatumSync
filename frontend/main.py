@@ -46,12 +46,17 @@ async def auth(request: Request):
 
         id_token = token.get("id_token")
         if not id_token:
-            raise ValueError("Missing 'id_token' in token response")
+            raise ValueError("No ID token returned by Google")
 
         user = await oauth.google.parse_id_token(request, id_token)
 
         request.session["user"] = dict(user)
         return RedirectResponse(url="/")
+    
+    except Exception as e:
+        print("❌ Error during auth callback:", str(e))
+        return RedirectResponse(url="/?error=auth_failed")
+
     
     except Exception as e:
         print(f"❌ Error during auth callback: {e}")
