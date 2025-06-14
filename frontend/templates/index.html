@@ -4,135 +4,119 @@
   <meta charset="UTF-8">
   <title>DatumSync – End-to-End Data Intelligence</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body {
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(120deg, #f7f7ff, #e3f2fd);
+      color: #111;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
       padding: 40px 20px;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(90deg, #a18cd1, #fbc2eb);
-      background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
-      color: #000;
       text-align: center;
     }
 
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .logo {
-      font-size: 3em;
-      margin-bottom: 15px;
-      animation: float 4s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
     h1 {
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      background: linear-gradient(90deg, #007cf0, #00dfd8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
-      color: transparent;
-      font-size: 3.5em;
-      margin-bottom: 10px;
-      color: #000;
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
     }
 
     .tagline {
-      font-size: 1.3em;
-      margin-bottom: 30px;
-      color: #111;
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 40px;
+      color: #333;
     }
 
     .features {
-      max-width: 700px;
-      margin: 0 auto 30px;
       text-align: left;
-      line-height: 1.8;
-      color: #111;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+      margin-bottom: 40px;
+    }
+
+    .features h2 {
+      font-size: 1.75rem;
+      margin-bottom: 20px;
+      color: #007cf0;
     }
 
     .features ul {
       padding-left: 20px;
+      list-style: disc;
     }
 
-    .cta-buttons .button {
+    .features li {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .cta-button {
       display: inline-block;
-      margin: 10px;
-      padding: 12px 20px;
-      background-color: rgba(255, 255, 255, 0.7);
-      color: #000;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, #007cf0, #00dfd8);
+      color: white;
       text-decoration: none;
       border-radius: 8px;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(0, 124, 240, 0.3);
+      transition: transform 0.3s ease;
     }
 
-    .cta-buttons .button:hover {
-      background-color: #000;
-      color: #fff;
-    }
-
-    .start-button {
-      margin-top: 30px;
-    }
-
-    .start-button a {
-      font-size: 1.2em;
-      padding: 14px 28px;
-      background-color: #000;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 10px;
-      transition: 0.3s ease;
-    }
-
-    .start-button a:hover {
-      background-color: #333;
-      color: #fff;
+    .cta-button:hover {
+      transform: translateY(-2px);
     }
 
     footer {
-      margin-top: 50px;
-      font-size: 0.9em;
-      color: #111;
+      margin-top: 60px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <div class="logo"></div>
-  <h1>DatumSync</h1>
-  <p class="tagline">Validate · Normalize · Convert · Predict — All in One Place</p>
 
-  <section class="features">
-    <h2>What DatumSync Offers:</h2>
-    <ul>
-      <li><strong> Validation:</strong> Ensure data accuracy across systems</li>
-      <li><strong> Normalization:</strong> Clean and standardize large datasets</li>
-      <li><strong> Conversion:</strong> Seamlessly transform CSV to Parquet/JSON</li>
-      <li><strong> Prediction:</strong> Get insights from built-in ML models</li>
-    </ul>
-  </section>
-<!--
-  <section class="cta-buttons">
-    <a href="/docs" class="button">API Docs</a>
-    <a href="https://github.com/vr2n/DatumSync" class="button" target="_blank">GitHub</a>
-  </section>
--->
-  <div style="text-align: center; margin-top: 2rem;">
-  <a href="/login" style="padding: 12px 24px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 5px;">
-    Let's Get Started with DatumSync
-  </a>
-</div>
+  <div class="container">
+    <h1>DatumSync</h1>
+    <p class="tagline">Validate · Normalize · Convert · Predict — All in One Place</p>
 
-  <footer>
-    <p>&copy; 2025 DatumSync by Shubham Singh</p>
-  </footer>
+    <section class="features">
+      <h2>What DatumSync Offers:</h2>
+      <ul>
+        <li><strong>Validation:</strong> Ensure data accuracy across systems</li>
+        <li><strong>Normalization:</strong> Clean and standardize large datasets</li>
+        <li><strong>Conversion:</strong> Seamlessly transform CSV to Parquet/JSON</li>
+        <li><strong>Prediction:</strong> Get insights from built-in ML models</li>
+      </ul>
+    </section>
+
+    <a href="/login" class="cta-button">Let's Get Started with DatumSync</a>
+
+    <footer>
+      <p>&copy; 2025 DatumSync by Shubham Singh</p>
+    </footer>
+  </div>
+
 </body>
 </html>
