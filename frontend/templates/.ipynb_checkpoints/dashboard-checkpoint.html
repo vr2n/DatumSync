@@ -4,20 +4,22 @@
   <meta charset="UTF-8" />
   <title>DatumSync – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #f0f2f0, #000c40);
       background-size: 400% 400%;
       animation: gradientMove 15s ease infinite;
+      color: #fff;
       display: flex;
       min-height: 100vh;
-      color: #fff;
     }
 
     @keyframes gradientMove {
@@ -28,7 +30,7 @@
 
     .sidebar {
       width: 220px;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.85);
       padding: 30px 15px;
       display: flex;
       flex-direction: column;
@@ -36,10 +38,10 @@
     }
 
     .sidebar h2 {
-      color: #fff;
-      font-size: 1.5em;
-      margin-bottom: 30px;
       text-align: center;
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: 30px;
     }
 
     .sidebar a {
@@ -47,12 +49,12 @@
       text-decoration: none;
       padding: 10px 15px;
       border-radius: 8px;
-      transition: background 0.3s;
+      transition: 0.3s;
     }
 
     .sidebar a:hover {
-      background-color: #444;
-      color: #fff;
+      background: #0072ff;
+      color: white;
     }
 
     .main-content {
@@ -70,66 +72,53 @@
     }
 
     .header h1 {
+      font-size: 2em;
       background: linear-gradient(90deg, #00c6ff, #0072ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-size: 2.5em;
-      margin: 0;
     }
 
-    /* Profile Dropdown */
-    .profile-dropdown {
-      position: relative;
-      display: inline-block;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .profile-button {
-      background: #222;
-      border: none;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 500;
+    .user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #fff;
     }
 
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      background-color: #333;
-      min-width: 160px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-      border-radius: 8px;
-      z-index: 1;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
     }
 
-    .dropdown-content a {
-      color: white;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
-
-    .dropdown-content a:hover {
-      background-color: #444;
-    }
-
-    .profile-dropdown:hover .dropdown-content {
-      display: block;
-    }
-
-    .content-section {
+    .stat-card {
       background-color: rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 20px;
+      text-align: center;
+      transition: transform 0.2s ease;
     }
 
-    .content-section h2 {
-      margin-top: 0;
-      color: #fff;
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .stat-card h2 {
+      font-size: 2em;
+      margin-bottom: 8px;
+      color: #00c6ff;
+    }
+
+    .stat-card p {
+      font-size: 1em;
+      color: #ddd;
     }
 
     footer {
@@ -155,29 +144,36 @@
 
   <div class="main-content">
     <div class="header">
-      <h1>Welcome to DatumSync</h1>
-      <div class="profile-dropdown">
-        <button class="profile-button">👤 Profile</button>
-        <div class="dropdown-content">
-          <a href="/settings">Account Settings</a>
-          <a href="/logout">Logout</a>
-        </div>
+      <h1>Dashboard</h1>
+      <div class="user-info">
+        {% if user and user.get('picture') %}
+          <img src="{{ user['picture'] }}" alt="User Avatar">
+        {% endif %}
+        <span>{{ user['name'] if user and user.get('name') else 'User' }}</span>
       </div>
     </div>
 
-    <div class="content-section">
-      <h2>Dashboard Overview</h2>
-      <p>This is your main control center for validating, normalizing, converting, and predicting data pipelines. Use the sidebar to navigate.</p>
-    </div>
-
-    <div class="content-section">
-      <h2>Status Summary</h2>
-      <ul>
-        <li>🔍 Last validation: Successful (2 hours ago)</li>
-        <li>📊 Last normalization: 3 batches</li>
-        <li>🔄 Last conversion: CSV to Parquet (today)</li>
-        <li>🧠 Predictions generated for: 1 new file</li>
-      </ul>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h2>{{ stats.validation }}</h2>
+        <p>Validations Performed</p>
+      </div>
+      <div class="stat-card">
+        <h2>{{ stats.normalization }}</h2>
+        <p>Normalizations Done</p>
+      </div>
+      <div class="stat-card">
+        <h2>{{ stats.conversion }}</h2>
+        <p>Conversions Completed</p>
+      </div>
+      <div class="stat-card">
+        <h2>{{ stats.prediction }}</h2>
+        <p>Predictions Made</p>
+      </div>
+      <div class="stat-card">
+        <h2>{{ stats.history }}</h2>
+        <p>Total Files Processed</p>
+      </div>
     </div>
 
     <footer>
