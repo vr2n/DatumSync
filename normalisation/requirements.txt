@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+numpy
+google-cloud-storage
+scikit-learn
+pyarrow
+openpyxl
+scipy
