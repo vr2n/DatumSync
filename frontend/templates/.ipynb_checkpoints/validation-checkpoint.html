@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Validation - DatumSync</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f0f2f0, #000c40);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+      color: #fff;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar h2 {
+      font-size: 1.5em;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #444;
+      color: #fff;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      background: #222;
+      border: none;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: #333;
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      z-index: 1;
+    }
+
+    .dropdown-content a {
+      color: white;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #444;
+    }
+
+    .profile-dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    main {
+      background-color: rgba(255, 255, 255, 0.08);
+      padding: 40px;
+      margin: 20px;
+      border-radius: 12px;
+      max-width: 900px;
+      align-self: center;
+    }
+
+    main h2 {
+      margin-bottom: 20px;
+      font-size: 1.5em;
+      color: #fff;
+    }
+
+    main p {
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin-bottom: 12px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #00c6ff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.9em;
+      color: #ccc;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <h2>DatumSync</h2>
+    <a href="/dashboard">Dashboard Overview</a>
+    <a href="/validate">Validation</a>
+    <a href="/normalize">Normalization</a>
+    <a href="/convert">Conversion</a>
+    <a href="/predict">Prediction</a>
+    <a href="/profile">Data Profiling</a>
+    <a href="/reports">Reports</a>
+  </nav>
+
+  <div class="main-content">
+    <div class="header">
+      <h1>Validation Module</h1>
+      <div class="profile-dropdown">
+        <button class="profile-button">👤 Profile</button>
+        <div class="dropdown-content">
+          <a href="/settings">Account Settings</a>
+          <a href="/logout">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <h2>Validation Features</h2>
+      <ul>
+        <li>Cross-format source-to-target data validation</li>
+        <li>Missing and duplicate record checks</li>
+        <li>Schema conformity enforcement</li>
+        <li>Comprehensive validation reports with pass/fail insights</li>
+        <li>Supports CSV, JSON, and Parquet formats</li>
+      </ul>
+    </main>
+  </div>
+</body>
+</html>

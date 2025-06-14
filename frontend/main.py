@@ -81,6 +81,57 @@ async def dashboard(request: Request):
         "stats": stats
     })
 
+
+# ✅ Additional module routes
+
+@app.get("/validate", response_class=HTMLResponse)
+async def validate_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("validation.html", {"request": request, "user": user})
+
+@app.get("/normalize", response_class=HTMLResponse)
+async def normalize_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("normalization.html", {"request": request, "user": user})
+
+@app.get("/convert", response_class=HTMLResponse)
+async def convert_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("conversion.html", {"request": request, "user": user})
+
+@app.get("/predict", response_class=HTMLResponse)
+async def predict_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("prediction.html", {"request": request, "user": user})
+
+@app.get("/profile", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("profiling.html", {"request": request, "user": user})
+
+@app.get("/reports", response_class=HTMLResponse)
+async def reports_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("reports.html", {"request": request, "user": user})
+
+@app.get("/settings", response_class=HTMLResponse)
+async def settings_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("settings.html", {"request": request, "user": user})
 @app.get("/logout")
 async def logout(request: Request):
     request.session.pop("user", None)
