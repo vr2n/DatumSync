@@ -57,6 +57,12 @@
       color: #fff;
     }
 
+    .sidebar a.active {
+      background-color: #0072ff;
+      color: #fff;
+      font-weight: bold;
+    }
+
     .main-content {
       flex: 1;
       display: flex;
@@ -76,6 +82,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      margin: 0;
     }
 
     .profile-dropdown {
@@ -123,8 +130,11 @@
       padding: 40px;
       margin: 20px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 1100px;
       align-self: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
     }
 
     main h2 {
@@ -133,18 +143,44 @@
       color: #fff;
     }
 
-    main p {
+    main p, main ul, main li, label {
       margin-bottom: 20px;
       line-height: 1.6;
+      font-size: 1rem;
     }
 
     ul {
       padding-left: 20px;
-      margin-bottom: 20px;
     }
 
     li {
       margin-bottom: 12px;
+    }
+
+    input[type="file"] {
+      background-color: #222;
+      border: 1px solid #555;
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    .upload-section {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .info-section {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    button.profile-button {
+      display: inline-block;
+      margin-top: 10px;
     }
 
     .back-link {
@@ -173,7 +209,7 @@
     <h2>DatumSync</h2>
     <a href="/dashboard">Dashboard Overview</a>
     <a href="/validate">Validation</a>
-    <a href="/normalize">Normalization</a>
+    <a class="active" href="/normalize">Normalization</a>
     <a href="/convert">Conversion</a>
     <a href="/predict">Prediction</a>
     <a href="/profile">Data Profiling</a>
@@ -193,16 +229,35 @@
     </div>
 
     <main>
-      <h2>About Normalization</h2>
-      <p>The normalization module is responsible for cleaning, standardizing, and preparing datasets for further processing. It ensures data consistency and structure across various sources.</p>
+      <!-- LEFT: Explanation -->
+      <div class="info-section">
+        <h2>About Normalization</h2>
+        <p>
+          The <strong>Normalization Module</strong> is responsible for cleaning, standardizing, and preparing datasets for further processing.
+          It ensures structural consistency and formatting across diverse sources — a crucial step before analysis or model training.
+        </p>
 
-      <h2>Key Features</h2>
-      <ul>
-        <li>Standardize inconsistent data entries (e.g., case sensitivity, date formats).</li>
-        <li>Remove noise and irrelevant characters.</li>
-        <li>Apply formatting rules (like trimming whitespace, capitalization).</li>
-        <li>Handle missing and null values systematically.</li>
-      </ul>
+        <h2>Key Features</h2>
+        <ul>
+          <li>Standardize inconsistent data entries (e.g., case sensitivity, date formats)</li>
+          <li>Trim extra whitespace and remove non-standard characters</li>
+          <li>Apply formatting rules (e.g., capitalizing names, fixing phone/email formats)</li>
+          <li>Systematic handling of missing and null values</li>
+        </ul>
+      </div>
+
+      <!-- RIGHT: Upload Form -->
+      <div class="upload-section">
+        <h2>Upload File for Normalization</h2>
+        <form action="/normalize-file" method="POST" enctype="multipart/form-data">
+          <label for="inputFile">Input File:</label><br>
+          <input type="file" id="inputFile" name="input_file" accept=".csv,.json,.parquet" required><br>
+
+          <button type="submit" class="profile-button">⚙️ Normalize Now</button>
+        </form>
+
+        <p class="back-link">Supported formats: <strong>CSV</strong>, <strong>JSON</strong>, <strong>Parquet</strong></p>
+      </div>
     </main>
 
     <footer>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Normalization | DatumSync</title>
+  <title>Conversion | DatumSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -57,6 +57,11 @@
       color: #fff;
     }
 
+    .sidebar a.active {
+      background-color: #0072ff;
+      color: #fff;
+      font-weight: bold;
+    }
 
     .main-content {
       flex: 1;
@@ -124,7 +129,7 @@
       padding: 40px;
       margin: 20px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 1000px;
       align-self: center;
     }
 
@@ -134,9 +139,15 @@
       color: #fff;
     }
 
-    main p {
-      margin-bottom: 20px;
-      line-height: 1.6;
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+
+    .left, .right {
+      flex: 1;
+      min-width: 300px;
     }
 
     ul {
@@ -146,6 +157,36 @@
 
     li {
       margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 16px;
+    }
+
+    .profile-button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #0072ff;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .profile-button:hover {
+      background-color: #005fcc;
     }
 
     .back-link {
@@ -175,7 +216,7 @@
     <a href="/dashboard">Dashboard Overview</a>
     <a href="/validate">Validation</a>
     <a href="/normalize">Normalization</a>
-    <a href="/convert">Conversion</a>
+    <a class="active" href="/convert">Conversion</a>
     <a href="/predict">Prediction</a>
     <a href="/profile">Data Profiling</a>
     <a href="/reports">Reports</a>
@@ -194,12 +235,34 @@
     </div>
 
     <main>
-      <h2>CSV to Parquet / JSON Transformation</h2>
-      <ul>
-        <li>Upload and convert files from CSV to Parquet/JSON formats</li>
-        <li>Supports multi-file batch processing</li>
-        <li>Cloud-native integration for file storage</li>
-      </ul>
+      <div class="container">
+        <div class="left">
+          <h2>CSV to Parquet / JSON Transformation</h2>
+          <ul>
+            <li>Upload and convert files from CSV to Parquet or JSON format</li>
+            <li>Supports multi-file batch processing</li>
+            <li>Seamlessly integrates with cloud storage</li>
+          </ul>
+          <p class="back-link">Ensure your CSV is validated before transformation.</p>
+        </div>
+
+        <div class="right">
+          <h2>Upload File for Conversion</h2>
+          <form action="/convert-file" method="POST" enctype="multipart/form-data">
+            <label for="convertFile">Upload CSV File:</label>
+            <input type="file" id="convertFile" name="convert_file" accept=".csv" required>
+
+            <label for="format">Select Output Format:</label>
+            <select id="format" name="format" required>
+              <option value="">-- Choose Format --</option>
+              <option value="parquet">Parquet</option>
+              <option value="json">JSON</option>
+            </select>
+
+            <button type="submit" class="profile-button">Convert File</button>
+          </form>
+        </div>
+      </div>
     </main>
 
     <footer>

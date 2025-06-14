@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Normalization | DatumSync</title>
+  <title>Reports | DatumSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -55,6 +55,12 @@
     .sidebar a:hover {
       background-color: #444;
       color: #fff;
+    }
+
+    .sidebar a.active {
+      background-color: #0072ff;
+      color: #fff;
+      font-weight: bold;
     }
 
     .main-content {
@@ -123,39 +129,46 @@
       padding: 40px;
       margin: 20px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 95%;
       align-self: center;
+      overflow-x: auto;
     }
 
-    main h2 {
+    h2 {
       margin-bottom: 20px;
       font-size: 1.5em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
       color: #fff;
+      font-size: 0.95em;
     }
 
-    main p {
-      margin-bottom: 20px;
-      line-height: 1.6;
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #444;
+      text-align: left;
     }
 
-    ul {
-      padding-left: 20px;
-      margin-bottom: 20px;
+    th {
+      background-color: #222;
+      color: #00c6ff;
     }
 
-    li {
-      margin-bottom: 12px;
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.05);
     }
 
-    .back-link {
-      display: inline-block;
-      margin-top: 20px;
+    .actions a {
       color: #00c6ff;
       text-decoration: none;
+      margin-right: 10px;
       font-weight: 500;
     }
 
-    .back-link:hover {
+    .actions a:hover {
       text-decoration: underline;
     }
 
@@ -177,7 +190,7 @@
     <a href="/convert">Conversion</a>
     <a href="/predict">Prediction</a>
     <a href="/profile">Data Profiling</a>
-    <a href="/reports">Reports</a>
+    <a class="active" href="/reports">Reports</a>
   </nav>
 
   <div class="main-content">
@@ -193,12 +206,47 @@
     </div>
 
     <main>
-      <h2>Auto-generated Reports</h2>
-      <ul>
-        <li>View results of validation, profiling, and prediction</li>
-        <li>Export as PDF or JSON</li>
-        <li>Access historical runs and audit trails</li>
-      </ul>
+      <h2>Auto-generated Reports History</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>Module</th>
+            <th>Status</th>
+            <th>Timestamp</th>
+            <th>Uploaded By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example static row - replace with dynamic backend data -->
+          <tr>
+            <td>sales_q2.csv</td>
+            <td>Prediction</td>
+            <td>✅ Completed</td>
+            <td>2025-06-14 15:40</td>
+            <td>shubham@datum.com</td>
+            <td class="actions">
+              <a href="/view/1">View</a>
+              <a href="/download/json/1">JSON</a>
+              <a href="/download/pdf/1">PDF</a>
+            </td>
+          </tr>
+          <tr>
+            <td>customers_raw.csv</td>
+            <td>Validation</td>
+            <td>✅ Completed</td>
+            <td>2025-06-14 14:02</td>
+            <td>shubham@datum.com</td>
+            <td class="actions">
+              <a href="/view/2">View</a>
+              <a href="/download/json/2">JSON</a>
+              <a href="/download/pdf/2">PDF</a>
+            </td>
+          </tr>
+          <!-- Repeat for more reports -->
+        </tbody>
+      </table>
     </main>
 
     <footer>

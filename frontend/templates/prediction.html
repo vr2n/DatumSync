@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Normalization | DatumSync</title>
+  <title>Prediction | DatumSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -57,6 +57,11 @@
       color: #fff;
     }
 
+    .sidebar a.active {
+      background-color: #0072ff;
+      color: #fff;
+      font-weight: bold;
+    }
 
     .main-content {
       flex: 1;
@@ -124,7 +129,7 @@
       padding: 40px;
       margin: 20px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 1000px;
       align-self: center;
     }
 
@@ -134,18 +139,49 @@
       color: #fff;
     }
 
-    main p {
-      margin-bottom: 20px;
-      line-height: 1.6;
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+
+    .left, .right {
+      flex: 1;
+      min-width: 300px;
     }
 
     ul {
       padding-left: 20px;
-      margin-bottom: 20px;
     }
 
     li {
       margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 16px;
+      background-color: #222;
+      color: #fff;
+    }
+
+    button.profile-button {
+      background-color: #0072ff;
+      margin-top: 10px;
+    }
+
+    button.profile-button:hover {
+      background-color: #005fcc;
     }
 
     .back-link {
@@ -176,7 +212,7 @@
     <a href="/validate">Validation</a>
     <a href="/normalize">Normalization</a>
     <a href="/convert">Conversion</a>
-    <a href="/predict">Prediction</a>
+    <a href="/predict" class="active">Prediction</a>
     <a href="/profile">Data Profiling</a>
     <a href="/reports">Reports</a>
   </nav>
@@ -194,12 +230,42 @@
     </div>
 
     <main>
-      <h2>ML Inference Pipeline</h2>
-      <ul>
-        <li>Built-in machine learning model support</li>
-        <li>Run real-time and batch inference</li>
-        <li>Save and visualize prediction results</li>
-      </ul>
+      <div class="container">
+        <div class="left">
+          <h2>ML Inference Pipeline</h2>
+          <p>
+            The <strong>Prediction Module</strong> enables users to run inference on preprocessed and normalized datasets.
+            This is powered by trained machine learning models that support both batch and real-time predictions.
+          </p>
+          <ul>
+            <li>Built-in machine learning model support</li>
+            <li>Run real-time and batch inference</li>
+            <li>Save and visualize prediction results</li>
+            <li>Monitor model performance over time</li>
+            <li>Flexible integration with normalized outputs</li>
+          </ul>
+          <p class="back-link">For best results, ensure the data is validated and normalized before prediction.</p>
+        </div>
+
+        <div class="right">
+          <h2>Upload File for Prediction</h2>
+          <form action="/predict-file" method="POST" enctype="multipart/form-data">
+            <label for="predictFile">Upload Normalized File:</label>
+            <input type="file" id="predictFile" name="predict_file" accept=".csv,.parquet" required>
+
+            <label for="target">Select Prediction Target:</label>
+            <select id="target" name="target" required>
+              <option value="">-- Choose Feature --</option>
+              <option value="churn">Customer Churn</option>
+              <option value="sales">Sales Forecast</option>
+              <option value="risk">Credit Risk</option>
+              <!-- Extend with more prediction targets as needed -->
+            </select>
+
+            <button type="submit" class="profile-button">Run Prediction</button>
+          </form>
+        </div>
+      </div>
     </main>
 
     <footer>

@@ -57,6 +57,11 @@
       color: #fff;
     }
 
+    .sidebar a.active {
+      background-color: #0072ff;
+      color: #fff;
+      font-weight: bold;
+    }
 
     .main-content {
       flex: 1;
@@ -135,18 +140,33 @@
       color: #fff;
     }
 
-    main p {
+    main p, main ul, main li, label {
       margin-bottom: 20px;
       line-height: 1.6;
+      font-size: 1rem;
     }
 
     ul {
       padding-left: 20px;
-      margin-bottom: 20px;
     }
 
     li {
       margin-bottom: 12px;
+    }
+
+    input[type="file"] {
+      background-color: #222;
+      border: 1px solid #555;
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    button.profile-button {
+      display: inline-block;
+      margin-top: 10px;
     }
 
     .back-link {
@@ -174,7 +194,7 @@
   <nav class="sidebar">
     <h2>DatumSync</h2>
     <a href="/dashboard">Dashboard Overview</a>
-    <a href="/validate">Validation</a>
+    <a href="/validate" class="active">Validation</a>
     <a href="/normalize">Normalization</a>
     <a href="/convert">Conversion</a>
     <a href="/predict">Prediction</a>
@@ -194,16 +214,42 @@
       </div>
     </div>
 
-    <main>
-      <h2>Validation Features</h2>
-      <ul>
-        <li>Cross-format source-to-target data validation</li>
-        <li>Missing and duplicate record checks</li>
-        <li>Schema conformity enforcement</li>
-        <li>Comprehensive validation reports with pass/fail insights</li>
-        <li>Supports CSV, JSON, and Parquet formats</li>
-      </ul>
-    </main>
+    <main style="display: flex; flex-wrap: wrap; gap: 40px;">
+  <!-- LEFT: Explanation -->
+  <div style="flex: 1; min-width: 300px;">
+    <h2>What is Data Validation?</h2>
+    <p>
+      The <strong>DatumSync Validation Module</strong> helps you ensure that your <strong>source</strong> and <strong>target</strong> datasets are consistent.
+      It performs automated checks for schema mismatches, missing records, duplicates, and more.
+    </p>
+
+    <h2>How It Works</h2>
+    <ul>
+      <li>Upload your <strong>Source</strong> and <strong>Target</strong> files.</li>
+      <li>We compare their structure and content.</li>
+      <li>Results are compiled into a detailed validation report.</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT: Upload Form -->
+  <div style="flex: 1; min-width: 300px;">
+    <h2>Upload Files</h2>
+    <form action="/validate-files" method="POST" enctype="multipart/form-data">
+      <label for="sourceFile">Source File:</label>
+      <input type="file" id="sourceFile" name="source_file" accept=".csv,.json,.parquet" required>
+
+      <label for="targetFile">Target File:</label>
+      <input type="file" id="targetFile" name="target_file" accept=".csv,.json,.parquet" required>
+
+      <button type="submit" class="profile-button">Start Validation</button>
+    </form>
+
+    <p class="back-link">
+      Supports <strong>.csv</strong>, <strong>.json</strong>, and <strong>.parquet</strong> formats.
+    </p>
+  </div>
+</main>
+
   </div>
 </body>
 </html>

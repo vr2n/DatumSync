@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Normalization | DatumSync</title>
+  <title>Profiling | DatumSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -57,6 +57,11 @@
       color: #fff;
     }
 
+    .sidebar a.active {
+      background-color: #0072ff;
+      color: #fff;
+      font-weight: bold;
+    }
 
     .main-content {
       flex: 1;
@@ -124,7 +129,7 @@
       padding: 40px;
       margin: 20px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 1000px;
       align-self: center;
     }
 
@@ -134,18 +139,48 @@
       color: #fff;
     }
 
-    main p {
-      margin-bottom: 20px;
-      line-height: 1.6;
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+
+    .left, .right {
+      flex: 1;
+      min-width: 300px;
     }
 
     ul {
       padding-left: 20px;
-      margin-bottom: 20px;
     }
 
     li {
       margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 16px;
+      background-color: #222;
+      color: #fff;
+    }
+
+    button.profile-button {
+      background-color: #0072ff;
+      margin-top: 10px;
+    }
+
+    button.profile-button:hover {
+      background-color: #005fcc;
     }
 
     .back-link {
@@ -177,7 +212,7 @@
     <a href="/normalize">Normalization</a>
     <a href="/convert">Conversion</a>
     <a href="/predict">Prediction</a>
-    <a href="/profile">Data Profiling</a>
+    <a href="/profile" class="active">Data Profiling</a>
     <a href="/reports">Reports</a>
   </nav>
 
@@ -194,12 +229,26 @@
     </div>
 
     <main>
-      <h2>Explore Data Quality</h2>
-      <ul>
-        <li>Generate descriptive statistics</li>
-        <li>Identify outliers, nulls, and unique values</li>
-        <li>Detect correlations and data distributions</li>
-      </ul>
+      <div class="container">
+        <div class="left">
+          <h2>Explore Data Quality</h2>
+          <ul>
+            <li>Generate descriptive statistics</li>
+            <li>Identify outliers, nulls, and unique values</li>
+            <li>Detect correlations and data distributions</li>
+          </ul>
+          <p class="back-link">Run profiling after validation and normalization for best insights.</p>
+        </div>
+
+        <div class="right">
+          <h2>Upload File for Profiling</h2>
+          <form action="/profile-file" method="POST" enctype="multipart/form-data">
+            <label for="profileFile">Upload File (CSV or Parquet):</label>
+            <input type="file" id="profileFile" name="profile_file" accept=".csv,.parquet" required>
+            <button type="submit" class="profile-button">Run Profiling</button>
+          </form>
+        </div>
+      </div>
     </main>
 
     <footer>

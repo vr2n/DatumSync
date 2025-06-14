@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Profiling | DatumSync</title>
+  <title>Account Settings | DatumSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -129,70 +129,51 @@
       padding: 40px;
       margin: 20px;
       border-radius: 12px;
-      max-width: 1000px;
+      max-width: 700px;
       align-self: center;
     }
 
-    main h2 {
-      margin-bottom: 20px;
-      font-size: 1.5em;
-      color: #fff;
-    }
-
-    .container {
+    .user-info {
       display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 30px;
     }
 
-    .left, .right {
-      flex: 1;
-      min-width: 300px;
+    .user-info img {
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border: 2px solid #00c6ff;
     }
 
-    ul {
-      padding-left: 20px;
+    .user-info div {
+      font-size: 1.1em;
     }
 
-    li {
-      margin-bottom: 12px;
+    .settings-section {
+      margin-bottom: 30px;
     }
 
-    label {
+    .settings-section label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
+      margin-bottom: 10px;
+      font-weight: 600;
     }
 
-    input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
+    .settings-section input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .delete-button {
+      background: #ff4d4d;
       border: none;
-      margin-bottom: 16px;
-      background-color: #222;
+      padding: 12px 20px;
+      border-radius: 10px;
       color: #fff;
-    }
-
-    button.profile-button {
-      background-color: #0072ff;
-      margin-top: 10px;
-    }
-
-    button.profile-button:hover {
-      background-color: #005fcc;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-top: 20px;
-      color: #00c6ff;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .back-link:hover {
-      text-decoration: underline;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     footer {
@@ -212,13 +193,14 @@
     <a href="/normalize">Normalization</a>
     <a href="/convert">Conversion</a>
     <a href="/predict">Prediction</a>
-    <a href="/profile" class="active">Data Profiling</a>
+    <a href="/profile">Data Profiling</a>
     <a href="/reports">Reports</a>
+    <a class="active" href="/settings">Account Settings</a>
   </nav>
 
   <div class="main-content">
     <div class="header">
-      <h1>Profiling Module</h1>
+      <h1>Account Settings</h1>
       <div class="profile-dropdown">
         <button class="profile-button">👤 Profile</button>
         <div class="dropdown-content">
@@ -229,25 +211,27 @@
     </div>
 
     <main>
-      <div class="container">
-        <div class="left">
-          <h2>Explore Data Quality</h2>
-          <ul>
-            <li>Generate descriptive statistics</li>
-            <li>Identify outliers, nulls, and unique values</li>
-            <li>Detect correlations and data distributions</li>
-          </ul>
-          <p class="back-link">Run profiling after validation and normalization for best insights.</p>
+      <div class="user-info">
+        <img src="{{ user.picture }}" alt="User Profile Picture">
+        <div>
+          <p><strong>Name:</strong> {{ user.name }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
         </div>
+      </div>
 
-        <div class="right">
-          <h2>Upload File for Profiling</h2>
-          <form action="/profile-file" method="POST" enctype="multipart/form-data">
-            <label for="profileFile">Upload File (CSV or Parquet):</label>
-            <input type="file" id="profileFile" name="profile_file" accept=".csv,.parquet" required>
-            <button type="submit" class="profile-button">Run Profiling</button>
-          </form>
-        </div>
+      <div class="settings-section">
+        <label>
+          <input type="checkbox" checked>
+          Enable Email Notifications
+        </label>
+        <label>
+          <input type="checkbox">
+          Auto-delete files after 30 days
+        </label>
+      </div>
+
+      <div class="settings-section">
+        <button class="delete-button">⚠️ Delete My Account</button>
       </div>
     </main>
 
