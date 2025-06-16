@@ -3,8 +3,4 @@ uvicorn
 pandas
 numpy
 google-cloud-storage
-scikit-learn
-pyarrow
-openpyxl
 scipy
-google-cloud-logging

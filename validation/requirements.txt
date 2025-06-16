@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pandas
+openpyxl
+pyarrow
+google-cloud-storage
+google-cloud-logging

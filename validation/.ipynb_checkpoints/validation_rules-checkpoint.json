@@ -1,0 +1,73 @@
+{
+  "constraints": [
+    {
+      "type": "hasColumnCount",
+      "value": 5
+    },
+    {
+      "type": "hasColumnNames",
+      "columns": ["id", "email", "age", "signup_date", "country"]
+    },
+    {
+      "type": "hasDtype",
+      "column": "age",
+      "dtype": "int64"
+    },
+    {
+      "type": "isNullable",
+      "column": "email",
+      "nullable": false
+    },
+    {
+      "type": "isUnique",
+      "column": "id"
+    },
+    {
+      "type": "matchesPattern",
+      "column": "email",
+      "pattern": "^[^@]+@[^@]+\\.[^@]+$"
+    },
+    {
+      "type": "isComplete",
+      "column": "country"
+    },
+    {
+      "type": "isWithinRange",
+      "column": "age",
+      "min": 18,
+      "max": 99
+    },
+    {
+      "type": "outlierZScore",
+      "column": "age",
+      "threshold": 3
+    },
+    {
+      "type": "expressionCheck",
+      "expression": "age >= 18"
+    },
+    {
+      "type": "statCheck",
+      "column": "age",
+      "metric": "mean",
+      "value": 30,
+      "tolerance": 5
+    },
+    {
+      "type": "valueDriftCheck",
+      "column": "age",
+      "previous_value": 32,
+      "threshold": 3
+    },
+    {
+      "type": "isFresh",
+      "column": "signup_date",
+      "max_days": 30
+    },
+    {
+      "type": "percentComplete",
+      "column": "email",
+      "threshold": 95
+    }
+  ]
+}

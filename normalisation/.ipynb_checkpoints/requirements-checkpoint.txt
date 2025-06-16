@@ -7,3 +7,4 @@ scikit-learn
 pyarrow
 openpyxl
 scipy
+google-cloud-logging
