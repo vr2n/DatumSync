@@ -4,34 +4,41 @@ import sys
 import json
 import os
 from google.cloud import storage
-import tempfile
+from io import BytesIO
+from scipy.stats import ks_2samp  # ✅ Added missing import
 
-def download_from_gcs(bucket_name: str, blob_name: str) -> str:
+
+# === GCS Utilities ===
+def download_blob_as_bytes(bucket_name: str, blob_name: str) -> bytes:
     client = storage.Client()
     bucket = client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
+    return blob.download_as_bytes()
 
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
-    blob.download_to_filename(temp_file.name)
-    return temp_file.name
 
-def upload_to_gcs(local_path: str, bucket_name: str, destination_blob_name: str) -> str:
+def upload_to_gcs_from_bytes(data: bytes, bucket_name: str, destination_blob_name: str) -> str:
     client = storage.Client()
     bucket = client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
+    blob.upload_from_string(data)
 
-    blob.upload_from_filename(local_path)
-    blob.make_public()
-    return blob.public_url
+    # Return blob path or signed URL (if needed)
+    return f"gs://{bucket_name}/{destination_blob_name}"
 
-def load_data(filepath: str) -> pd.DataFrame:
-    if filepath.endswith(".csv"):
-        return pd.read_csv(filepath)
-    elif filepath.endswith(".parquet"):
-        return pd.read_parquet(filepath)
+
+# === Data Loader ===
+def load_data(bucket_name: str, blob_name: str) -> pd.DataFrame:
+    file_bytes = download_blob_as_bytes(bucket_name, blob_name)
+
+    if blob_name.endswith(".csv"):
+        return pd.read_csv(BytesIO(file_bytes))
+    elif blob_name.endswith(".parquet"):
+        return pd.read_parquet(BytesIO(file_bytes))
     else:
         raise ValueError("Unsupported file type. Use CSV or Parquet.")
 
+
+# === Profiling ===
 def profile_column(col: pd.Series) -> dict:
     profile = {
         "dtype": str(col.dtype),
@@ -66,6 +73,7 @@ def profile_column(col: pd.Series) -> dict:
 
     return profile
 
+
 def profile_dataframe(df: pd.DataFrame) -> dict:
     overall_profile = {
         "total_rows": len(df),
@@ -80,15 +88,13 @@ def profile_dataframe(df: pd.DataFrame) -> dict:
 
     return overall_profile
 
-def upload_json_to_gcs(data: dict, bucket_name: str, destination_blob_name: str) -> str:
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".json")
-    with open(temp_file.name, "w") as f:
-        json.dump(data, f, indent=4)
 
-    return upload_to_gcs(temp_file.name, bucket_name, destination_blob_name)
+def upload_json_to_gcs(data: dict, bucket_name: str, blob_name: str) -> str:
+    json_bytes = json.dumps(data).encode("utf-8")
+    return upload_to_gcs_from_bytes(json_bytes, bucket_name, blob_name)
 
-    
-# === Drift Detection Utilities ===
+
+# === Drift Detection ===
 def calculate_psi(expected: pd.Series, actual: pd.Series, buckets: int = 10) -> float:
     def scale_bins(series):
         return np.histogram(series, bins=buckets)[0] / len(series)
@@ -102,6 +108,7 @@ def calculate_psi(expected: pd.Series, actual: pd.Series, buckets: int = 10) -> 
     ])
     return psi_value
 
+
 def detect_drift(baseline_df: pd.DataFrame, current_df: pd.DataFrame, psi_threshold: float = 0.2, null_threshold: float = 10.0) -> dict:
     drift_results = {}
     common_cols = [col for col in baseline_df.columns if col in current_df.columns]
@@ -114,11 +121,9 @@ def detect_drift(baseline_df: pd.DataFrame, current_df: pd.DataFrame, psi_thresh
             psi_score = calculate_psi(baseline_col, current_col)
             ks_pvalue = ks_2samp(baseline_col.dropna(), current_col.dropna()).pvalue
 
-            # Statistical shifts
             mean_diff = abs(current_col.mean() - baseline_col.mean())
             std_diff = abs(current_col.std() - baseline_col.std())
 
-            # Null spike
             baseline_null_pct = baseline_col.isnull().mean() * 100
             current_null_pct = current_col.isnull().mean() * 100
             null_increase = current_null_pct - baseline_null_pct
@@ -140,7 +145,6 @@ def detect_drift(baseline_df: pd.DataFrame, current_df: pd.DataFrame, psi_thresh
             }
 
         elif pd.api.types.is_object_dtype(current_col):
-            # Categorical distributions (top-k frequency overlap)
             base_freq = baseline_col.value_counts(normalize=True)
             curr_freq = current_col.value_counts(normalize=True)
 
@@ -149,42 +153,39 @@ def detect_drift(baseline_df: pd.DataFrame, current_df: pd.DataFrame, psi_thresh
 
             drift_results[col] = {
                 "category_overlap": round(common_overlap, 4),
-                "drift_by_low_overlap": common_overlap < 0.6,  # Custom threshold
+                "drift_by_low_overlap": common_overlap < 0.6,
                 "null_baseline_pct": round(baseline_col.isnull().mean() * 100, 2),
                 "null_current_pct": round(current_col.isnull().mean() * 100, 2)
             }
 
     return drift_results
 
-# === Main ===
+
+# === CLI Usage (Optional) ===
 def main():
     if len(sys.argv) < 3:
-        print("Usage: python profile.py <bucket_name> <current_data_blob> [baseline_data_blob]")
+        print("Usage: python profile_utils.py <bucket_name> <current_data_blob> [baseline_data_blob]")
         sys.exit(1)
 
     bucket_name = sys.argv[1]
     current_blob = sys.argv[2]
     baseline_blob = sys.argv[3] if len(sys.argv) > 3 else None
 
-    # Download and profile current dataset
-    current_local_path = download_from_gcs(bucket_name, current_blob)
-    current_df = load_data(current_local_path)
+    current_df = load_data(bucket_name, current_blob)
     current_profile = profile_dataframe(current_df)
 
-    # Upload profile JSON to GCS
     profile_blob_name = f"profiling/{os.path.splitext(os.path.basename(current_blob))[0]}_profile.json"
     profile_url = upload_json_to_gcs(current_profile, bucket_name, profile_blob_name)
     print(f"[✓] Profiling report uploaded to GCS: {profile_url}")
 
-    # Optional: Drift detection if baseline is provided
     if baseline_blob:
-        baseline_local_path = download_from_gcs(bucket_name, baseline_blob)
-        baseline_df = load_data(baseline_local_path)
+        baseline_df = load_data(bucket_name, baseline_blob)
         drift_report = detect_drift(baseline_df, current_df)
 
         drift_blob_name = f"profiling/{os.path.splitext(os.path.basename(current_blob))[0]}_drift.json"
         drift_url = upload_json_to_gcs(drift_report, bucket_name, drift_blob_name)
         print(f"[✓] Drift report uploaded to GCS: {drift_url}")
+
 
 if __name__ == "__main__":
     main()

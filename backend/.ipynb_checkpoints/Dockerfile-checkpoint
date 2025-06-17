@@ -1,20 +1,21 @@
-# Use official Python image
-FROM python:3.10-slim
+# Use official Python base image
+FROM python:3.11-slim
 
-# Set working directory
+# Set work directory
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y gcc
 
-# Copy files
-COPY . .
-
 # Install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose Cloud Run's expected port
+# Copy source code
+COPY . .
+
+# Expose FastAPI port
 EXPOSE 8080
 
-# Start FastAPI server on the correct port
+# Start FastAPI app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

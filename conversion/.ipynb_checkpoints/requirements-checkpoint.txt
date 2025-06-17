@@ -3,3 +3,4 @@ uvicorn
 pandas
 openpyxl
 google-cloud-storage
+pyarrow

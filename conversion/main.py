@@ -28,8 +28,8 @@ def upload_to_gcs(bucket_name, blob_name, buffer: io.BytesIO):
 @app.post("/convert-and-upload")
 def convert_and_upload(
     filename: str = Query(..., description="Filename in the GCS bucket"),
-    source_format: str = Query(..., regex="^(csv|json|excel)$"),
-    target_format: str = Query(..., regex="^(csv|json|excel)$")
+    source_format: str = Query(..., pattern="^(csv|json|excel|parquet)$"),
+    target_format: str = Query(..., pattern="^(csv|json|excel|parquet)$")
 ):
     # Step 1: Download source file
     source_buffer = download_from_gcs(BUCKET_NAME, filename)
