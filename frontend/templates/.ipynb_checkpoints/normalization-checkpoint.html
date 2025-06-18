@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Normalization | DatumSync</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -14,7 +14,7 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f0f2f0, #000c40);
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       background-size: 400% 400%;
       animation: gradientMove 15s ease infinite;
       color: #fff;
@@ -30,7 +30,7 @@
 
     .sidebar {
       width: 220px;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.85);
       padding: 30px 15px;
       display: flex;
       flex-direction: column;
@@ -38,10 +38,10 @@
     }
 
     .sidebar h2 {
-      color: #fff;
-      font-size: 1.5em;
-      margin-bottom: 30px;
+      color: #39ff14;
       text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 30px;
     }
 
     .sidebar a {
@@ -49,18 +49,14 @@
       text-decoration: none;
       padding: 10px 15px;
       border-radius: 8px;
-      transition: background 0.3s;
+      transition: 0.3s;
     }
 
-    .sidebar a:hover {
-      background-color: #444;
-      color: #fff;
-    }
-
+    .sidebar a:hover,
     .sidebar a.active {
-      background-color: #0072ff;
-      color: #fff;
-      font-weight: bold;
+      background: #39ff14;
+      color: #000;
+      font-weight: 600;
     }
 
     .main-content {
@@ -78,11 +74,10 @@
 
     .header h1 {
       font-size: 2em;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      background: linear-gradient(90deg, #39ff14, #00dfd8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin: 0;
     }
 
     .profile-dropdown {
@@ -90,35 +85,41 @@
     }
 
     .profile-button {
-      background: #222;
-      border: none;
-      color: #fff;
+      background: #111;
+      border: 1px solid #39ff14;
+      color: #39ff14;
       padding: 10px 16px;
       border-radius: 20px;
       cursor: pointer;
       font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .profile-button:hover {
+      background-color: #39ff14;
+      color: #000;
     }
 
     .dropdown-content {
       display: none;
       position: absolute;
       right: 0;
-      background-color: #333;
-      min-width: 160px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      background-color: #111;
+      border: 1px solid #333;
       border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
       z-index: 1;
     }
 
     .dropdown-content a {
       color: white;
       padding: 12px 16px;
-      text-decoration: none;
       display: block;
+      text-decoration: none;
     }
 
     .dropdown-content a:hover {
-      background-color: #444;
+      background-color: #222;
     }
 
     .profile-dropdown:hover .dropdown-content {
@@ -126,10 +127,10 @@
     }
 
     main {
-      background-color: rgba(255, 255, 255, 0.08);
+      background-color: rgba(255, 255, 255, 0.05);
       padding: 40px;
       margin: 20px;
-      border-radius: 12px;
+      border-radius: 16px;
       max-width: 1100px;
       align-self: center;
       display: flex;
@@ -140,10 +141,10 @@
     main h2 {
       margin-bottom: 20px;
       font-size: 1.5em;
-      color: #fff;
+      color: #39ff14;
     }
 
-    main p, main ul, main li, label {
+    main p, main ul, label {
       margin-bottom: 20px;
       line-height: 1.6;
       font-size: 1rem;
@@ -158,8 +159,8 @@
     }
 
     input[type="file"] {
-      background-color: #222;
-      border: 1px solid #555;
+      background-color: #111;
+      border: 1px solid #39ff14;
       color: #fff;
       padding: 10px;
       border-radius: 8px;
@@ -168,26 +169,16 @@
       cursor: pointer;
     }
 
-    .upload-section {
+    .upload-section, .info-section {
       flex: 1;
       min-width: 300px;
-    }
-
-    .info-section {
-      flex: 1;
-      min-width: 300px;
-    }
-
-    button.profile-button {
-      display: inline-block;
-      margin-top: 10px;
     }
 
     .back-link {
+      color: #00dfd8;
+      text-decoration: none;
       display: inline-block;
       margin-top: 20px;
-      color: #00c6ff;
-      text-decoration: none;
       font-weight: 500;
     }
 
@@ -196,11 +187,11 @@
     }
 
     footer {
-      margin-top: auto;
       text-align: center;
       font-size: 0.9em;
       color: #ccc;
       padding: 20px;
+      margin-top: auto;
     }
   </style>
 </head>
@@ -233,16 +224,16 @@
       <div class="info-section">
         <h2>About Normalization</h2>
         <p>
-          The <strong>Normalization Module</strong> is responsible for cleaning, standardizing, and preparing datasets for further processing.
-          It ensures structural consistency and formatting across diverse sources — a crucial step before analysis or model training.
+          The <strong>Normalization Module</strong> cleans, standardizes, and harmonizes datasets to prepare them for deeper processing.
+          It ensures formatting consistency and structure across various data inputs — a key step before modeling or analytics.
         </p>
 
         <h2>Key Features</h2>
         <ul>
-          <li>Standardize inconsistent data entries (e.g., case sensitivity, date formats)</li>
-          <li>Trim extra whitespace and remove non-standard characters</li>
-          <li>Apply formatting rules (e.g., capitalizing names, fixing phone/email formats)</li>
-          <li>Systematic handling of missing and null values</li>
+          <li>Standardize entries (e.g., cases, date formats)</li>
+          <li>Remove whitespace & non-standard characters</li>
+          <li>Apply formatting rules (email, phone, etc.)</li>
+          <li>Handle missing/null values systematically</li>
         </ul>
       </div>
 
@@ -250,13 +241,12 @@
       <div class="upload-section">
         <h2>Upload File for Normalization</h2>
         <form action="/normalize-file" method="POST" enctype="multipart/form-data">
-          <label for="inputFile">Input File:</label><br>
-          <input type="file" id="inputFile" name="input_file" accept=".csv,.json,.parquet" required><br>
-
+          <label for="inputFile">Input File:</label>
+          <input type="file" id="inputFile" name="input_file" accept=".csv,.json,.parquet" required />
           <button type="submit" class="profile-button">⚙️ Normalize Now</button>
         </form>
 
-        <p class="back-link">Supported formats: <strong>CSV</strong>, <strong>JSON</strong>, <strong>Parquet</strong></p>
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
       </div>
     </main>
 

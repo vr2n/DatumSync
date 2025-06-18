@@ -1,54 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login | DatumSync</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f0f2f0, #000c40);
-            color: #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8">
+  <title>Login | DatumSync</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .login-container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 40px 50px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        .login-container h1 {
-            margin-bottom: 20px;
-            font-size: 32px;
-        }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-        .login-btn {
-            display: inline-block;
-            padding: 12px 19px;
-            background-color: #4285F4;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 6px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
+    .login-container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 50px 60px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      color: #fff;
+    }
 
-        .login-btn:hover {
-            background-color: #3367D6;
-        }
-    </style>
+    .login-container h1 {
+      font-size: 2em;
+      margin-bottom: 25px;
+      background: linear-gradient(90deg, #39ff14, #00dfd8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .login-btn {
+      display: inline-block;
+      padding: 14px 24px;
+      background-color: #4285F4;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    .login-btn:hover {
+      background-color: #3367D6;
+      transform: scale(1.05);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
-    <div class="login-container">
-        <h1>Login to DatumSync</h1>
-        <a class="login-btn" href="/login">Sign in with Google</a>
-    </div>
+  <div class="login-container">
+    <h1>Login to DatumSync</h1>
+    <a class="login-btn" href="/login">Sign in with Google</a>
+  </div>
+
+  <footer>
+    &copy; 2025 DatumSync by Shubham Singh
+  </footer>
 </body>
 </html>

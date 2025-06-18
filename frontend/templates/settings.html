@@ -14,7 +14,7 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f0f2f0, #000c40);
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       background-size: 400% 400%;
       animation: gradientMove 15s ease infinite;
       color: #fff;
@@ -30,7 +30,7 @@
 
     .sidebar {
       width: 220px;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.85);
       padding: 30px 15px;
       display: flex;
       flex-direction: column;
@@ -38,7 +38,7 @@
     }
 
     .sidebar h2 {
-      color: #fff;
+      color: #39ff14;
       font-size: 1.5em;
       margin-bottom: 30px;
       text-align: center;
@@ -49,17 +49,13 @@
       text-decoration: none;
       padding: 10px 15px;
       border-radius: 8px;
-      transition: background 0.3s;
+      transition: 0.3s;
     }
 
-    .sidebar a:hover {
-      background-color: #444;
-      color: #fff;
-    }
-
+    .sidebar a:hover,
     .sidebar a.active {
-      background-color: #0072ff;
-      color: #fff;
+      background-color: #39ff14;
+      color: #000;
       font-weight: bold;
     }
 
@@ -78,7 +74,7 @@
 
     .header h1 {
       font-size: 2em;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      background: linear-gradient(90deg, #39ff14, #00dfd8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -89,35 +85,41 @@
     }
 
     .profile-button {
-      background: #222;
-      border: none;
-      color: #fff;
+      background: #111;
+      border: 1px solid #39ff14;
+      color: #39ff14;
       padding: 10px 16px;
       border-radius: 20px;
       cursor: pointer;
       font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .profile-button:hover {
+      background-color: #39ff14;
+      color: #000;
     }
 
     .dropdown-content {
       display: none;
       position: absolute;
       right: 0;
-      background-color: #333;
-      min-width: 160px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      background-color: #111;
+      border: 1px solid #333;
       border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
       z-index: 1;
     }
 
     .dropdown-content a {
       color: white;
       padding: 12px 16px;
-      text-decoration: none;
       display: block;
+      text-decoration: none;
     }
 
     .dropdown-content a:hover {
-      background-color: #444;
+      background-color: #222;
     }
 
     .profile-dropdown:hover .dropdown-content {
@@ -125,10 +127,10 @@
     }
 
     main {
-      background-color: rgba(255, 255, 255, 0.08);
+      background-color: rgba(255, 255, 255, 0.05);
       padding: 40px;
       margin: 20px;
-      border-radius: 12px;
+      border-radius: 16px;
       max-width: 700px;
       align-self: center;
     }
@@ -145,11 +147,15 @@
       width: 80px;
       height: 80px;
       object-fit: cover;
-      border: 2px solid #00c6ff;
+      border: 2px solid #39ff14;
     }
 
     .user-info div {
       font-size: 1.1em;
+    }
+
+    .user-info p {
+      margin-bottom: 6px;
     }
 
     .settings-section {
@@ -158,12 +164,14 @@
 
     .settings-section label {
       display: block;
-      margin-bottom: 10px;
-      font-weight: 600;
+      margin-bottom: 12px;
+      font-weight: 500;
     }
 
     .settings-section input[type="checkbox"] {
       margin-right: 10px;
+      transform: scale(1.2);
+      accent-color: #39ff14;
     }
 
     .delete-button {
@@ -174,6 +182,11 @@
       color: #fff;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .delete-button:hover {
+      background-color: #cc0000;
     }
 
     footer {
@@ -219,14 +232,8 @@
       </div>
 
       <div class="settings-section">
-        <label>
-          <input type="checkbox" checked>
-          Enable Email Notifications
-        </label>
-        <label>
-          <input type="checkbox">
-          Auto-delete files after 30 days
-        </label>
+        <label><input type="checkbox" checked> Enable Email Notifications</label>
+        <label><input type="checkbox"> Auto-delete files after 30 days</label>
       </div>
 
       <div class="settings-section">

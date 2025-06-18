@@ -14,7 +14,7 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f0f2f0, #000c40);
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       background-size: 400% 400%;
       animation: gradientMove 15s ease infinite;
       color: #fff;
@@ -30,7 +30,7 @@
 
     .sidebar {
       width: 220px;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.85);
       padding: 30px 15px;
       display: flex;
       flex-direction: column;
@@ -38,7 +38,7 @@
     }
 
     .sidebar h2 {
-      color: #fff;
+      color: #39ff14;
       font-size: 1.5em;
       margin-bottom: 30px;
       text-align: center;
@@ -49,17 +49,13 @@
       text-decoration: none;
       padding: 10px 15px;
       border-radius: 8px;
-      transition: background 0.3s;
+      transition: 0.3s;
     }
 
-    .sidebar a:hover {
-      background-color: #444;
-      color: #fff;
-    }
-
+    .sidebar a:hover,
     .sidebar a.active {
-      background-color: #0072ff;
-      color: #fff;
+      background-color: #39ff14;
+      color: #000;
       font-weight: bold;
     }
 
@@ -78,7 +74,7 @@
 
     .header h1 {
       font-size: 2em;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      background: linear-gradient(90deg, #39ff14, #00dfd8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -89,35 +85,41 @@
     }
 
     .profile-button {
-      background: #222;
-      border: none;
-      color: #fff;
+      background: #111;
+      border: 1px solid #39ff14;
+      color: #39ff14;
       padding: 10px 16px;
       border-radius: 20px;
       cursor: pointer;
       font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .profile-button:hover {
+      background-color: #39ff14;
+      color: #000;
     }
 
     .dropdown-content {
       display: none;
       position: absolute;
       right: 0;
-      background-color: #333;
-      min-width: 160px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      background-color: #111;
+      border: 1px solid #333;
       border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
       z-index: 1;
     }
 
     .dropdown-content a {
       color: white;
       padding: 12px 16px;
-      text-decoration: none;
       display: block;
+      text-decoration: none;
     }
 
     .dropdown-content a:hover {
-      background-color: #444;
+      background-color: #222;
     }
 
     .profile-dropdown:hover .dropdown-content {
@@ -125,10 +127,10 @@
     }
 
     main {
-      background-color: rgba(255, 255, 255, 0.08);
+      background-color: rgba(255, 255, 255, 0.05);
       padding: 40px;
       margin: 20px;
-      border-radius: 12px;
+      border-radius: 16px;
       max-width: 1000px;
       align-self: center;
     }
@@ -136,7 +138,7 @@
     main h2 {
       margin-bottom: 20px;
       font-size: 1.5em;
-      color: #fff;
+      color: #39ff14;
     }
 
     .container {
@@ -172,27 +174,19 @@
       border-radius: 6px;
       border: none;
       margin-bottom: 16px;
-    }
-
-    .profile-button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #0072ff;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
+      background: #222;
       color: #fff;
-      font-weight: 500;
     }
 
-    .profile-button:hover {
-      background-color: #005fcc;
+    select option {
+      background: #111;
+      color: #fff;
     }
 
     .back-link {
       display: inline-block;
       margin-top: 20px;
-      color: #00c6ff;
+      color: #39ff14;
       text-decoration: none;
       font-weight: 500;
     }
@@ -225,13 +219,21 @@
   <div class="main-content">
     <div class="header">
       <h1>Conversion Module</h1>
-      <div class="profile-dropdown">
-        <button class="profile-button">👤 Profile</button>
-        <div class="dropdown-content">
-          <a href="/settings">Account Settings</a>
-          <a href="/logout">Logout</a>
-        </div>
-      </div>
+      <div class="user-info">
+  {% if user and user.get('picture') %}
+    <img src="{{ user['picture'] }}" alt="User Avatar" style="border-radius: 50%; width: 40px; height: 40px;">
+  {% endif %}
+  <div class="user-name-dropdown" style="position: relative;">
+    <span class="dropdown-toggle" onclick="toggleDropdown()" style="cursor: pointer; font-weight: 500; padding: 10px;">
+      {{ user['name'] if user and user.get('name') else 'User' }}
+    </span>
+    <div class="dropdown-menu" id="userDropdown" style="display: none; position: absolute; right: 0; background: #333; padding: 10px; border-radius: 8px;">
+      <a href="/settings" style="color: #fff; display: block; margin-bottom: 5px;">Account Settings</a>
+      <a href="/logout" style="color: #fff; display: block;">Logout</a>
+    </div>
+  </div>
+</div>
+
     </div>
 
     <main>
@@ -257,9 +259,8 @@
               <option value="">-- Choose Format --</option>
               <option value="parquet">Parquet</option>
               <option value="json">JSON</option>
-                <option value="csv">CSV</option>
-                <option value="excel">Excel</option>
-
+              <option value="csv">CSV</option>
+              <option value="excel">Excel</option>
             </select>
 
             <button type="submit" class="profile-button">Convert File</button>
@@ -272,5 +273,22 @@
       &copy; 2025 DatumSync by Shubham Singh
     </footer>
   </div>
+        <script>
+      function toggleDropdown() {
+        var menu = document.getElementById('userDropdown');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      }
+
+      // Optional: close the dropdown if clicking outside
+      window.onclick = function(event) {
+        if (!event.target.matches('.dropdown-toggle')) {
+          var dropdown = document.getElementById("userDropdown");
+          if (dropdown && dropdown.style.display === "block") {
+            dropdown.style.display = "none";
+          }
+        }
+      };
+    </script>
+
 </body>
 </html>
