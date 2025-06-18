@@ -194,14 +194,60 @@
     .back-link:hover {
       text-decoration: underline;
     }
-      .user-name-dropdown {
+      .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+    }
+
+    .user-name-dropdown {
       position: relative;
     }
 
     .dropdown-toggle {
+      cursor: pointer;
+    }
+
+    .dropdown-toggle::after {
+      content: " ▼";
+      font-size: 0.75rem;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 120%;
+      right: 0;
+      background: rgba(0, 0, 0, 0.95);
+      border: 1px solid #444;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      display: none;
+      min-width: 160px;
+      z-index: 100;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
       color: #fff;
-      background: transparent;
-      padding: 10px;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #e6e6e6;
+    }
+
+    .dropdown-menu.show {
+      display: block;
     }
 
 
@@ -229,22 +275,22 @@
   <div class="main-content">
     <div class="header">
       <h1>Conversion Module</h1>
-      <div class="user-info" style="display: flex; align-items: center; gap: 12px; position: relative;">
-  {% if user and user.get('picture') %}
-    <img src="{{ user['picture'] }}" alt="User Avatar" style="border-radius: 50%; width: 40px; height: 40px;">
-  {% endif %}
-  <div class="user-name-dropdown">
-    <span class="dropdown-toggle" onclick="toggleDropdown()" style="cursor: pointer; font-weight: 500;">
-      {{ user['name'] if user and user.get('name') else 'User' }}
-    </span>
-    <div class="dropdown-menu" id="userDropdown" style="display: none; position: absolute; top: 100%; right: 0; background: #333; padding: 10px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 10;">
-      <a href="/settings" style="color: #fff; display: block; padding: 6px 10px;">Account Settings</a>
-      <a href="/logout" style="color: #fff; display: block; padding: 6px 10px;">Logout</a>
-    </div>
+      <div class="user-info">
+        {% if user and user.get('picture') %}
+          <img src="{{ user['picture'] }}" alt="User Avatar">
+        {% endif %}
+        <div class="user-name-dropdown">
+          <span class="dropdown-toggle" onclick="toggleDropdown()">
+            {{ user['name'] if user and user.get('name') else 'User' }}
+          </span>
+          <div class="dropdown-menu" id="userDropdown">
+            <a href="/settings">Account Settings</a>
+            <a href="/logout">Logout</a>
+          </div>
+        </div>
   </div>
 
 
-  </div>
 
 
     </div>
