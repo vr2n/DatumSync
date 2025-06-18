@@ -5,6 +5,9 @@
   <title>DatumSync – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Add this inside <head> -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -226,23 +229,80 @@
         <p>Total Files Processed</p>
       </div>
     </div>
+      
+    <!-- Add this inside your .main-content below stats-grid -->
+<canvas id="statsChart" style="margin-top: 40px; background-color: white; border-radius: 12px; padding: 20px;"></canvas>
 
     <footer>
       &copy; 2025 DatumSync by Shubham Singh
     </footer>
   </div>
-
-  <script>
-    function toggleDropdown() {
-      document.getElementById("userDropdown").classList.toggle("show");
-    }
-
-    // Optional: Close dropdown if clicked outside
-    window.addEventListener("click", function (e) {
-      if (!e.target.closest(".user-name-dropdown")) {
-        document.getElementById("userDropdown").classList.remove("show");
+  <!-- Add this inside <script> at the bottom -->
+    <script>
+      function toggleDropdown() {
+        document.getElementById("userDropdown").classList.toggle("show");
       }
-    });
-  </script>
+
+      window.addEventListener("click", function (e) {
+        if (!e.target.closest(".user-name-dropdown")) {
+          document.getElementById("userDropdown").classList.remove("show");
+        }
+      });
+
+      // Chart data using Jinja variables
+      const statsData = {
+        labels: ['Validation', 'Normalization', 'Conversion', 'Prediction', 'Total Files'],
+        datasets: [{
+          label: 'Operation Count',
+          data: [
+              {{ stats.validation | tojson }},
+              {{ stats.normalization | tojson }},
+              {{ stats.conversion | tojson }},
+              {{ stats.prediction | tojson }},
+              {{ stats.history | tojson }}
+            ],
+
+          backgroundColor: [
+            '#00c6ff',
+            '#0072ff',
+            '#00b09b',
+            '#96c93d',
+            '#f7971e'
+          ],
+          borderRadius: 8
+        }]
+      };
+
+      const config = {
+        type: 'bar',
+        data: statsData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Data Processing Summary',
+              color: '#333',
+              font: { size: 18 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#333' },
+              grid: { color: '#ddd' }
+            },
+            x: {
+              ticks: { color: '#333' },
+              grid: { display: false }
+            }
+          }
+        }
+      };
+
+      new Chart(document.getElementById('statsChart'), config);
+    </script>
+
 </body>
 </html>
