@@ -8,3 +8,4 @@ gunicorn
 httpx
 sqlalchemy
 psycopg2-binary
+google-cloud-storage
