@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import os
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import Base, User, ConvertedFile
+from models import Base, User, ConvertedFile, ValidationResult
 from google.cloud import storage
 import uuid
 import requests
