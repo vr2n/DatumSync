@@ -225,7 +225,7 @@ async def handle_conversion(
             original_file=filename,
             converted_file=converted_path,
             format=format,
-            created_at=datetime.datetime.utcnow()
+            created_at=datetime.utcnow()
         )
         db.add(db_entry)
         db.commit()
