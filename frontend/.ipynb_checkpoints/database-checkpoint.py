@@ -7,15 +7,18 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL is None:
+if not DATABASE_URL:
     raise ValueError("❌ DATABASE_URL not found in environment")
 
-# ✅ Recommended SSL options for CockroachDB Cloud
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"sslmode": "verify-full"},  # Use "require" if not using custom CA
+    connect_args={
+        "sslmode": "verify-full",
+        "sslrootcert": "/opt/render/project/src/frontend/certs/root.crt",
+        "options": "-c server_version=13"
+    },
     future=True,
-    echo=False  # Change to True for SQL debug logs
+    echo=True
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

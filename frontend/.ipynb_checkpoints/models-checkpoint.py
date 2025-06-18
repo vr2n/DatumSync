@@ -6,7 +6,8 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
-    email = Column(String, primary_key=True, index=True)
-    name = Column(String)
-    picture = Column(String)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    email = Column(String(255), primary_key=True, index=True, nullable=False)
+    name = Column(String(255), nullable=False)
+    picture = Column(String(512))
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
