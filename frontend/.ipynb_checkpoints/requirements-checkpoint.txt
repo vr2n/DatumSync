@@ -6,3 +6,6 @@ python-dotenv
 itsdangerous
 gunicorn
 httpx
+sqlalchemy
+python-dotenv
+psycopg2-binary

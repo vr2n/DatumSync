@@ -6,9 +6,13 @@ from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import os
+from sqlalchemy.orm import Session
+from database import SessionLocal, engine
+from models import Base, User
 
 # ✅ Load environment variables
 load_dotenv()
+Base.metadata.create_all(bind=engine)
 
 # ✅ Initialize FastAPI
 app = FastAPI()
@@ -50,15 +54,29 @@ async def auth_callback(request: Request):
         token = await oauth.google.authorize_access_token(request)
         userinfo = token.get('userinfo')
         if userinfo:
-            request.session['user'] = {
+            user_data = {
                 "name": userinfo["name"],
                 "email": userinfo["email"],
                 "picture": userinfo["picture"]
             }
+            request.session['user'] = user_data
+
+            # ✅ Save user to CockroachDB if not exists
+            db: Session = SessionLocal()
+            existing_user = db.query(User).filter(User.email == user_data["email"]).first()
+            if not existing_user:
+                new_user = User(**user_data)
+                db.add(new_user)
+                db.commit()
+            db.close()
+
         return RedirectResponse(url="/dashboard")
+
     except Exception as e:
         print("❌ Auth callback error:", e)
         return RedirectResponse(url="/?error=auth_failed")
+    
+
 
 # ✅ Logout
 @app.get("/logout")
