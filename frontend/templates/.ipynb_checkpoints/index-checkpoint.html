@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>DatumSync – End-to-End Data Intelligence</title>
+  <title>DatumSync – Unified Data Validation & Transformation Platform</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+
+  <!-- Fonts Optimization -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -15,7 +22,7 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f0f2f0, #000c40);
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       background-size: 400% 400%;
       animation: gradientMove 15s ease infinite;
       color: #fff;
@@ -48,7 +55,7 @@
       font-size: 3.75rem;
       font-weight: 700;
       margin-bottom: 20px;
-      background: linear-gradient(90deg, #00dfd8, #007cf0);
+      background: linear-gradient(90deg, #00f2c3, #00c9a7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -58,7 +65,14 @@
       font-size: 1.35rem;
       font-weight: 500;
       color: #e0e0e0;
-      margin-bottom: 50px;
+      margin-bottom: 12px;
+    }
+
+    .subtagline {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #ccc;
+      margin-bottom: 40px;
     }
 
     .features {
@@ -88,22 +102,51 @@
       color: #f4f4f4;
     }
 
+    /* Accent color for buttons or links */
     .cta-button {
-      display: inline-block;
-      padding: 16px 36px;
-      font-size: 1.15rem;
-      background: linear-gradient(135deg, #007cf0, #00dfd8);
-      color: white;
+      background: linear-gradient(135deg, #00f2c3, #00c9a7); /* Mint tones */
+      color: #000;
       text-decoration: none;
       border-radius: 12px;
       font-weight: 600;
-      box-shadow: 0 4px 14px rgba(0, 124, 240, 0.4);
+      padding: 16px 36px;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 14px rgba(0, 242, 195, 0.4);
       transition: all 0.3s ease;
     }
 
     .cta-button:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 124, 240, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 242, 195, 0.6);
+    }
+
+    .waitlist-form {
+      margin-top: 30px;
+    }
+
+    .waitlist-form input[type="email"] {
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      width: 250px;
+      max-width: 80%;
+    }
+
+    .waitlist-form button {
+      margin-left: 10px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #007cf0, #00dfd8);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .waitlist-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 124, 240, 0.4);
     }
 
     footer {
@@ -136,6 +179,7 @@
     <div class="content">
       <h1>DatumSync</h1>
       <p class="tagline">Validate · Normalize · Convert · Predict — All in One Place</p>
+      <p class="subtagline">Trusted by early adopters. Built with FastAPI + Google Cloud.</p>
 
       <section class="features">
         <h2>Why Choose DatumSync?</h2>
@@ -148,12 +192,18 @@
       </section>
 
       <a href="/login" class="cta-button">Get Started with DatumSync →</a>
+
+      <!-- Optional Beta Waitlist Form -->
+      <form class="waitlist-form" action="https://formspree.io/f/your-id" method="POST">
+        <input type="email" name="email" placeholder="Join Beta – your@email.com" required>
+        <button type="submit">Join Waitlist</button>
+      </form>
+
     </div>
   </div>
 
   <footer>
-    &copy;2025 DatumSync by Shubham Singh. All rights reserved.
-
+    &copy; 2025 DatumSync by Shubham Singh. All rights reserved.
   </footer>
 
 </body>
