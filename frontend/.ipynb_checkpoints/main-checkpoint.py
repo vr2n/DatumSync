@@ -61,7 +61,7 @@ async def auth_callback(request: Request):
             }
             request.session['user'] = user_data
 
-            # ✅ Save user to CockroachDB if not exists
+            # ✅ Save user to Supabase PostgreSQL if not exists
             db: Session = SessionLocal()
             existing_user = db.query(User).filter(User.email == user_data["email"]).first()
             if not existing_user:
