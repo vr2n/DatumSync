@@ -250,55 +250,86 @@
       });
 
       // Chart data using Jinja variables
-      const statsData = {
-        labels: ['Validation', 'Normalization', 'Conversion', 'Prediction', 'Total Files'],
-        datasets: [{
-          label: 'Operation Count',
-          data: [
-              {{ stats.validation | tojson }},
-              {{ stats.normalization | tojson }},
-              {{ stats.conversion | tojson }},
-              {{ stats.prediction | tojson }},
-              {{ stats.history | tojson }}
-            ],
+      <script>
+      const labels = {{ stats_by_day.dates | tojson }};
+      const validationData = {{ stats_by_day.validation | tojson }};
+      const normalizationData = {{ stats_by_day.normalization | tojson }};
+      const conversionData = {{ stats_by_day.conversion | tojson }};
+      const predictionData = {{ stats_by_day.prediction | tojson }};
 
-          backgroundColor: [
-            '#00c6ff',
-            '#0072ff',
-            '#00b09b',
-            '#96c93d',
-            '#f7971e'
-          ],
-          borderRadius: 8
-        }]
+      const data = {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Validation',
+            data: validationData,
+            borderColor: '#00c6ff',
+            backgroundColor: '#00c6ff33',
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'Normalization',
+            data: normalizationData,
+            borderColor: '#0072ff',
+            backgroundColor: '#0072ff33',
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'Conversion',
+            data: conversionData,
+            borderColor: '#00b09b',
+            backgroundColor: '#00b09b33',
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'Prediction',
+            data: predictionData,
+            borderColor: '#96c93d',
+            backgroundColor: '#96c93d33',
+            fill: true,
+            tension: 0.3
+          }
+        ]
       };
 
       const config = {
-        type: 'bar',
-        data: statsData,
+        type: 'line',
+        data: data,
         options: {
           responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          stacked: false,
           plugins: {
-            legend: { display: false },
             title: {
               display: true,
-              text: 'Data Processing Summary',
+              text: 'Daily Data Processing Trends',
               color: '#333',
               font: { size: 18 }
+            },
+            legend: {
+              labels: {
+                color: '#333'
+              }
             }
           },
           scales: {
+            x: {
+              ticks: { color: '#333' },
+              grid: { display: false }
+            },
             y: {
               beginAtZero: true,
               ticks: { color: '#333' },
               grid: { color: '#ddd' }
-            },
-            x: {
-              ticks: { color: '#333' },
-              grid: { display: false }
             }
           }
-        }
+        },
       };
 
       new Chart(document.getElementById('statsChart'), config);

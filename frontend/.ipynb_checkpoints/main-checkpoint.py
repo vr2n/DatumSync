@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from authlib.integrations.starlette_client import OAuth
 from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 # ✅ Load environment variables
@@ -73,7 +73,7 @@ async def dashboard(request: Request):
     if not user:
         return RedirectResponse("/login")
 
-    # Simulated stats — replace with actual logic if needed
+    # Simulated total stats
     stats = {
         "normalization": 42,
         "conversion": 36,
@@ -82,11 +82,22 @@ async def dashboard(request: Request):
         "history": 60
     }
 
+    # Simulated day-wise data for the last 7 days
+    today = datetime.utcnow().date()
+    stats_by_day = {
+        "dates": [(today - timedelta(days=i)).isoformat() for i in reversed(range(7))],
+        "validation":   [8, 5, 7, 6, 9, 10, 6],
+        "normalization":[4, 3, 5, 4, 6, 7, 5],
+        "conversion":   [2, 3, 3, 2, 4, 5, 4],
+        "prediction":   [1, 2, 2, 3, 4, 5, 4],
+    }
+
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "user": user,
         "now": datetime.utcnow(),
-        "stats": stats
+        "stats": stats,
+        "stats_by_day": stats_by_day
     })
 
 # ✅ Validation Module
