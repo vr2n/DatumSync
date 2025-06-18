@@ -9,3 +9,4 @@ httpx
 sqlalchemy
 python-dotenv
 psycopg2-binary
+cockroachdb
