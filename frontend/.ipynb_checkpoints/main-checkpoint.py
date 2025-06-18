@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import os
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import Base, User, ConversionLog
+from models import Base, User, ConvertedFile
 from google.cloud import storage
 import uuid
 
@@ -36,6 +36,9 @@ oauth.register(
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
     client_kwargs={'scope': 'openid email profile'}
 )
+
+BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
+CLOUD_RUN_URL = "https://datumsync-481763043227.asia-south1.run.app/convert-and-upload"
 
 # ✅ Index route
 @app.get("/", response_class=HTMLResponse)
@@ -142,7 +145,12 @@ async def convert_page(request: Request):
     user = request.session.get("user")
     if not user:
         return RedirectResponse("/login")
-    return templates.TemplateResponse("conversion.html", {"request": request, "user": user})
+
+    db: Session = SessionLocal()
+    records = db.query(ConvertedFile).filter(ConvertedFile.email == user["email"]).order_by(ConvertedFile.created_at.desc()).all()
+    db.close()
+
+    return templates.TemplateResponse("conversion.html", {"request": request, "user": user, "records": records})
 
 # ✅ Prediction Module
 @app.get("/predict", response_class=HTMLResponse)
@@ -189,40 +197,36 @@ async def handle_conversion(
         return RedirectResponse("/login")
 
     user_email = user["email"]
-    safe_email = user_email.replace("@", "_").replace(".", "_")
-    bucket_name = f"{safe_email}_bucket"
-    filename = f"{uuid.uuid4()}_{convert_file.filename}"
-    blob_path = f"converted/{filename}"
+    filename = f"{user_email}/{uuid.uuid4().hex}_{convert_file.filename}"
 
-    try:
-        # Upload file to user-specific bucket
-        client = storage.Client()
-        bucket = client.bucket(bucket_name)
+    # Upload original file to GCS
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(filename)
+    blob.upload_from_file(convert_file.file)
 
-        if not bucket.exists():
-            bucket = client.create_bucket(bucket_name)
+    # Call Cloud Run conversion endpoint
+    params = {
+        "filename": filename,
+        "source_format": "csv",
+        "target_format": format
+    }
+    response = requests.post(CLOUD_RUN_URL, params=params)
 
-        blob = bucket.blob(blob_path)
-        blob.upload_from_file(convert_file.file, content_type="text/csv")
+    if response.status_code == 200:
+        converted_path = response.json().get("converted_file_path")
 
-        # Log to DB
+        # Save conversion info to DB
         db: Session = SessionLocal()
-        new_log = ConversionLog(
+        db_entry = ConvertedFile(
             email=user_email,
-            filename=filename,
+            original_file=filename,
+            converted_file=converted_path,
             format=format,
-            gcs_path=f"gs://{bucket_name}/{blob_path}"
+            created_at=datetime.datetime.utcnow()
         )
-        db.add(new_log)
+        db.add(db_entry)
         db.commit()
         db.close()
-
-    except Exception as e:
-        print(f"❌ Conversion error: {e}")
-        return templates.TemplateResponse("conversion.html", {
-            "request": request,
-            "user": user,
-            "error": f"Upload failed: {str(e)}"
-        })
 
     return RedirectResponse("/convert", status_code=303)
