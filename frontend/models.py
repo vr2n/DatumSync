@@ -1,6 +1,6 @@
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, String, DateTime
-import datetime
+from datetime import datetime
 import uuid
 
 Base = declarative_base()
@@ -11,7 +11,7 @@ class User(Base):
     email = Column(String(255), primary_key=True, index=True, nullable=False)
     name = Column(String(255), nullable=False)
     picture = Column(String(512))
-    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     
 class ConvertedFile(Base):
@@ -22,7 +22,7 @@ class ConvertedFile(Base):
     original_file = Column(String, nullable=False)
     converted_path = Column(String, nullable=False)
     format = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class ValidationResult(Base):
     __tablename__ = "validation_results"
