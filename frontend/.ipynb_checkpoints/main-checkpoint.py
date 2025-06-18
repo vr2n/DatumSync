@@ -40,7 +40,7 @@ oauth.register(
 )
 
 BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
-CLOUD_RUN_URL = "https://datumsync-481763043227.asia-south1.run.app/convert-and-upload"
+CLOUD_RUN_URL = "https://datumsync-481763043227.asia-south1.run.app"
 
 # ✅ Index route
 @app.get("/", response_class=HTMLResponse)
@@ -131,7 +131,17 @@ async def validate_page(request: Request):
     user = request.session.get("user")
     if not user:
         return RedirectResponse("/login")
-    return templates.TemplateResponse("validation.html", {"request": request, "user": user})
+
+    db = SessionLocal()
+    results = db.query(ValidationResult).filter(ValidationResult.email == user["email"]).order_by(ValidationResult.created_at.desc()).all()
+    db.close()
+
+    return templates.TemplateResponse("validation.html", {
+        "request": request,
+        "user": user,
+        "results": results
+    })
+
 
 # ✅ Normalization Module
 @app.get("/normalize", response_class=HTMLResponse)
@@ -215,7 +225,7 @@ async def handle_conversion(
         "source_format": "csv",      # hardcoded since file uploaded is CSV
         "target_format": format      # user-selected target format
     }
-    response = requests.post(CLOUD_RUN_URL, params=params)
+    response = requests.post(f"{CLOUD_RUN_URL}/convert-and-upload", params=params)
 
     # ✅ If conversion succeeds, store metadata in DB
     if response.status_code == 200:
@@ -235,3 +245,38 @@ async def handle_conversion(
 
     # ✅ Redirect back to Conversion Page
     return RedirectResponse("/convert", status_code=303)
+
+@app.post("/validate-files")
+async def handle_validation(
+    request: Request,
+    source_file: UploadFile = File(...),
+    target_file: UploadFile = File(...)
+):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    user_email = user["email"]
+
+    # ✅ Upload source file
+    source_filename = f"{user_email}/{uuid.uuid4().hex}_{source_file.filename}"
+    target_filename = f"{user_email}/{uuid.uuid4().hex}_{target_file.filename}"
+
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    bucket.blob(source_filename).upload_from_file(source_file.file)
+    bucket.blob(target_filename).upload_from_file(target_file.file)
+
+    # ✅ Trigger validation for both source and target
+    for file in [source_filename, target_filename]:
+        payload = {
+            "bucket": BUCKET_NAME,
+            "name": file
+        }
+        try:
+            response = requests.post(f"{CLOUD_RUN_URL}/validate", json=payload)
+            response.raise_for_status()
+        except Exception as e:
+            print("❌ Validation error:", e)
+
+    return RedirectResponse("/validate", status_code=303)
