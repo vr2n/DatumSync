@@ -5,7 +5,6 @@
   <title>DatumSync – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <!-- Add this inside <head> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -23,6 +22,7 @@
       color: #fff;
       display: flex;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     @keyframes gradientMove {
@@ -33,6 +33,7 @@
 
     .sidebar {
       width: 220px;
+      flex-shrink: 0;
       background-color: rgba(0, 0, 0, 0.85);
       padding: 30px 15px;
       display: flex;
@@ -65,6 +66,7 @@
       padding: 30px;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .header {
@@ -229,110 +231,112 @@
         <p>Total Files Processed</p>
       </div>
     </div>
-      
-    <!-- Add this inside your .main-content below stats-grid -->
-  <canvas id="statsChart" style="margin-top: 40px; background-color: white; border-radius: 12px; padding: 20px;"></canvas>
+
+    <!-- Chart Container -->
+    <div style="margin-top: 40px; background-color: white; border-radius: 12px; padding: 20px; max-width: 100%; overflow-x: auto;">
+      <canvas id="statsChart" style="width: 100%; max-width: 1000px; height: 400px;"></canvas>
+    </div>
 
     <footer>
       &copy; 2025 DatumSync by Shubham Singh
     </footer>
   </div>
-  <!-- Add this inside <script> at the bottom -->
-    <script>
-      function toggleDropdown() {
-        document.getElementById("userDropdown").classList.toggle("show");
+
+  <!-- Dropdown & Chart Script -->
+  <script>
+    function toggleDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    window.addEventListener("click", function (e) {
+      if (!e.target.closest(".user-name-dropdown")) {
+        document.getElementById("userDropdown").classList.remove("show");
       }
+    });
 
-      window.addEventListener("click", function (e) {
-        if (!e.target.closest(".user-name-dropdown")) {
-          document.getElementById("userDropdown").classList.remove("show");
+    const labels = {{ stats_by_day.dates | tojson }};
+    const validationData = {{ stats_by_day.validation | tojson }};
+    const normalizationData = {{ stats_by_day.normalization | tojson }};
+    const conversionData = {{ stats_by_day.conversion | tojson }};
+    const predictionData = {{ stats_by_day.prediction | tojson }};
+
+    const data = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Validation',
+          data: validationData,
+          borderColor: '#00c6ff',
+          backgroundColor: '#00c6ff33',
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Normalization',
+          data: normalizationData,
+          borderColor: '#0072ff',
+          backgroundColor: '#0072ff33',
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Conversion',
+          data: conversionData,
+          borderColor: '#00b09b',
+          backgroundColor: '#00b09b33',
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Prediction',
+          data: predictionData,
+          borderColor: '#96c93d',
+          backgroundColor: '#96c93d33',
+          fill: true,
+          tension: 0.3
         }
-      });
+      ]
+    };
 
-      // Chart data using Jinja variables
-      const labels = {{ stats_by_day.dates | tojson }};
-      const validationData = {{ stats_by_day.validation | tojson }};
-      const normalizationData = {{ stats_by_day.normalization | tojson }};
-      const conversionData = {{ stats_by_day.conversion | tojson }};
-      const predictionData = {{ stats_by_day.prediction | tojson }};
-
-      const data = {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Validation',
-            data: validationData,
-            borderColor: '#00c6ff',
-            backgroundColor: '#00c6ff33',
-            fill: true,
-            tension: 0.3
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        stacked: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Daily Data Processing Trends',
+            color: '#333',
+            font: { size: 18 }
           },
-          {
-            label: 'Normalization',
-            data: normalizationData,
-            borderColor: '#0072ff',
-            backgroundColor: '#0072ff33',
-            fill: true,
-            tension: 0.3
-          },
-          {
-            label: 'Conversion',
-            data: conversionData,
-            borderColor: '#00b09b',
-            backgroundColor: '#00b09b33',
-            fill: true,
-            tension: 0.3
-          },
-          {
-            label: 'Prediction',
-            data: predictionData,
-            borderColor: '#96c93d',
-            backgroundColor: '#96c93d33',
-            fill: true,
-            tension: 0.3
-          }
-        ]
-      };
-
-      const config = {
-        type: 'line',
-        data: data,
-        options: {
-          responsive: true,
-          interaction: {
-            mode: 'index',
-            intersect: false,
-          },
-          stacked: false,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Daily Data Processing Trends',
-              color: '#333',
-              font: { size: 18 }
-            },
-            legend: {
-              labels: {
-                color: '#333'
-              }
-            }
-          },
-          scales: {
-            x: {
-              ticks: { color: '#333' },
-              grid: { display: false }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: { color: '#333' },
-              grid: { color: '#ddd' }
+          legend: {
+            labels: {
+              color: '#333'
             }
           }
         },
-      };
+        scales: {
+          x: {
+            ticks: { color: '#333' },
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#333' },
+            grid: { color: '#ddd' }
+          }
+        }
+      }
+    };
 
-      new Chart(document.getElementById('statsChart'), config);
-    </script>
-
+    new Chart(document.getElementById('statsChart'), config);
+  </script>
 </body>
 </html>
