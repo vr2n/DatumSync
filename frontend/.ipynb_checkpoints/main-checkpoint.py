@@ -194,36 +194,38 @@ async def handle_conversion(
     convert_file: UploadFile = File(...),
     format: str = Form(...)
 ):
+    # ✅ Check user session
     user = request.session.get("user")
     if not user:
         return RedirectResponse("/login")
 
     user_email = user["email"]
+    # ✅ Generate GCS path with user's email
     filename = f"{user_email}/{uuid.uuid4().hex}_{convert_file.filename}"
 
-    # Upload original file to GCS
+    # ✅ Upload original file to GCS
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_file(convert_file.file)
 
-    # Call Cloud Run conversion endpoint
+    # ✅ Call Cloud Run conversion endpoint
     params = {
         "filename": filename,
-        "source_format": "csv",
-        "target_format": format
+        "source_format": "csv",      # hardcoded since file uploaded is CSV
+        "target_format": format      # user-selected target format
     }
     response = requests.post(CLOUD_RUN_URL, params=params)
 
+    # ✅ If conversion succeeds, store metadata in DB
     if response.status_code == 200:
         converted_path = response.json().get("converted_file_path")
 
-        # Save conversion info to DB
         db: Session = SessionLocal()
         db_entry = ConvertedFile(
             email=user_email,
             original_file=filename,
-            converted_file=converted_path,
+            converted_path=converted_path,
             format=format,
             created_at=datetime.utcnow()
         )
@@ -231,4 +233,5 @@ async def handle_conversion(
         db.commit()
         db.close()
 
+    # ✅ Redirect back to Conversion Page
     return RedirectResponse("/convert", status_code=303)
