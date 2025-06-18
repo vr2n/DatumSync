@@ -9,6 +9,13 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL is None:
     raise ValueError("❌ DATABASE_URL not found in environment")
-    
-engine = create_engine(DATABASE_URL, future=True)
+
+# ✅ Recommended SSL options for CockroachDB Cloud
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"sslmode": "verify-full"},  # Use "require" if not using custom CA
+    future=True,
+    echo=False  # Change to True for SQL debug logs
+)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

@@ -6,7 +6,7 @@ python-dotenv
 itsdangerous
 gunicorn
 httpx
-sqlalchemy
+sqlalchemy==1.4.52
 python-dotenv
-psycopg2-binary
-cockroachdb
+psycopg2-binary==2.9.9
+cockroachdb==0.1.0
