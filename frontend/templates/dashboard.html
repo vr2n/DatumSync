@@ -96,6 +96,9 @@
 
     .user-name-dropdown {
       position: relative;
+    }
+
+    .dropdown-toggle {
       cursor: pointer;
     }
 
@@ -128,7 +131,7 @@
       background-color: #e6e6e6;
     }
 
-    .user-name-dropdown:hover .dropdown-menu {
+    .dropdown-menu.show {
       display: block;
     }
 
@@ -190,8 +193,10 @@
           <img src="{{ user['picture'] }}" alt="User Avatar">
         {% endif %}
         <div class="user-name-dropdown">
-          <span class="dropdown-toggle">{{ user['name'] if user and user.get('name') else 'User' }}</span>
-          <div class="dropdown-menu">
+          <span class="dropdown-toggle" onclick="toggleDropdown()">
+            {{ user['name'] if user and user.get('name') else 'User' }}
+          </span>
+          <div class="dropdown-menu" id="userDropdown">
             <a href="/account-settings">Account Settings</a>
             <a href="/logout">Logout</a>
           </div>
@@ -226,5 +231,18 @@
       &copy; 2025 DatumSync by Shubham Singh
     </footer>
   </div>
+
+  <script>
+    function toggleDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    // Optional: Close dropdown if clicked outside
+    window.addEventListener("click", function (e) {
+      if (!e.target.closest(".user-name-dropdown")) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    });
+  </script>
 </body>
 </html>
