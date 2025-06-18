@@ -258,16 +258,17 @@ async def handle_validation(
 
     user_email = user["email"]
 
-    # ✅ Upload source file
+    # ✅ Generate unique file paths
     source_filename = f"{user_email}/{uuid.uuid4().hex}_{source_file.filename}"
     target_filename = f"{user_email}/{uuid.uuid4().hex}_{target_file.filename}"
 
+    # ✅ Upload to GCS
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
     bucket.blob(source_filename).upload_from_file(source_file.file)
     bucket.blob(target_filename).upload_from_file(target_file.file)
 
-    # ✅ Trigger validation for both source and target
+    # ✅ Call validation Cloud Run for both files
     for file in [source_filename, target_filename]:
         payload = {
             "bucket": BUCKET_NAME,
@@ -278,5 +279,22 @@ async def handle_validation(
             response.raise_for_status()
         except Exception as e:
             print("❌ Validation error:", e)
+
+    # ✅ Compute validation result path
+    result_path = f"validation-results/{source_filename}.results.json"
+
+    # ✅ Insert into Supabase DB
+    db: Session = SessionLocal()
+    db_entry = ValidationResult(
+        email=user_email,
+        source_file=source_filename,
+        target_file=target_filename,
+        result_path=result_path,
+        status="success",
+        created_at=datetime.utcnow()
+    )
+    db.add(db_entry)
+    db.commit()
+    db.close()
 
     return RedirectResponse("/validate", status_code=303)
