@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from authlib.integrations.starlette_client import OAuth
@@ -8,7 +8,9 @@ from datetime import datetime, timedelta
 import os
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import Base, User
+from models import Base, User, ConversionLog
+from google.cloud import storage
+import uuid
 
 # ✅ Load environment variables
 load_dotenv()
@@ -175,3 +177,52 @@ async def settings_page(request: Request):
     if not user:
         return RedirectResponse("/login")
     return templates.TemplateResponse("settings.html", {"request": request, "user": user})
+
+@app.post("/convert-file")
+async def handle_conversion(
+    request: Request,
+    convert_file: UploadFile = File(...),
+    format: str = Form(...)
+):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    user_email = user["email"]
+    safe_email = user_email.replace("@", "_").replace(".", "_")
+    bucket_name = f"{safe_email}_bucket"
+    filename = f"{uuid.uuid4()}_{convert_file.filename}"
+    blob_path = f"converted/{filename}"
+
+    try:
+        # Upload file to user-specific bucket
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+
+        if not bucket.exists():
+            bucket = client.create_bucket(bucket_name)
+
+        blob = bucket.blob(blob_path)
+        blob.upload_from_file(convert_file.file, content_type="text/csv")
+
+        # Log to DB
+        db: Session = SessionLocal()
+        new_log = ConversionLog(
+            email=user_email,
+            filename=filename,
+            format=format,
+            gcs_path=f"gs://{bucket_name}/{blob_path}"
+        )
+        db.add(new_log)
+        db.commit()
+        db.close()
+
+    except Exception as e:
+        print(f"❌ Conversion error: {e}")
+        return templates.TemplateResponse("conversion.html", {
+            "request": request,
+            "user": user,
+            "error": f"Upload failed: {str(e)}"
+        })
+
+    return RedirectResponse("/convert", status_code=303)
