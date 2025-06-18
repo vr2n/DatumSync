@@ -188,6 +188,63 @@
     .delete-button:hover {
       background-color: #cc0000;
     }
+      .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+    }
+
+    .user-name-dropdown {
+      position: relative;
+    }
+
+    .dropdown-toggle {
+      cursor: pointer;
+    }
+
+    .dropdown-toggle::after {
+      content: " ▼";
+      font-size: 0.75rem;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 120%;
+      right: 0;
+      background: rgba(0, 0, 0, 0.95);
+      border: 1px solid #444;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      display: none;
+      min-width: 160px;
+      z-index: 100;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #e6e6e6;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+
 
     footer {
       margin-top: auto;
@@ -213,13 +270,21 @@
   <div class="main-content">
     <div class="header">
       <h1>Account Settings</h1>
-      <div class="profile-dropdown">
-        <button class="profile-button">👤 Profile</button>
-        <div class="dropdown-content">
-          <a href="/settings">Account Settings</a>
-          <a href="/logout">Logout</a>
+      
+      <div class="user-info">
+        {% if user and user.get('picture') %}
+          <img src="{{ user['picture'] }}" alt="User Avatar">
+        {% endif %}
+        <div class="user-name-dropdown">
+          <span class="dropdown-toggle" onclick="toggleDropdown()">
+            {{ user['name'] if user and user.get('name') else 'User' }}
+          </span>
+          <div class="dropdown-menu" id="userDropdown">
+            <a href="/settings">Account Settings</a>
+            <a href="/logout">Logout</a>
+          </div>
         </div>
-      </div>
+  </div>
     </div>
 
     <main>
@@ -245,5 +310,20 @@
       &copy; 2025 DatumSync by Shubham Singh
     </footer>
   </div>
+    <script>
+      function toggleDropdown() {
+        var menu = document.getElementById('userDropdown');
+        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+      }
+
+      window.addEventListener('click', function(event) {
+        if (!event.target.closest('.user-name-dropdown')) {
+          var dropdown = document.getElementById("userDropdown");
+          if (dropdown && dropdown.style.display === "block") {
+            dropdown.style.display = "none";
+          }
+        }
+      });
+    </script>
 </body>
 </html>
