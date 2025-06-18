@@ -2,17 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>DatumSync – Unified Data Validation & Transformation Platform</title>
+  <title>DatumSync – End-to-End Data Intelligence</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Favicon -->
-  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-
-  <!-- Fonts Optimization -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
   <style>
     * {
       margin: 0;
@@ -55,7 +47,7 @@
       font-size: 3.75rem;
       font-weight: 700;
       margin-bottom: 20px;
-      background: linear-gradient(90deg, #00f2c3, #00c9a7);
+      background: linear-gradient(90deg, #39ff14, #00dfd8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -65,88 +57,65 @@
       font-size: 1.35rem;
       font-weight: 500;
       color: #e0e0e0;
-      margin-bottom: 12px;
+      margin-bottom: 50px;
     }
 
-    .subtagline {
-      font-size: 1rem;
-      font-weight: 400;
-      color: #ccc;
-      margin-bottom: 40px;
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
     }
 
-    .features {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(8px);
+    .feature-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
-      padding: 40px;
-      margin-bottom: 40px;
-      text-align: left;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .features h2 {
-      font-size: 1.75rem;
-      margin-bottom: 20px;
-      color: #00dfd8;
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 255, 140, 0.3);
     }
 
-    .features ul {
-      padding-left: 20px;
-      list-style: disc;
+    .feature-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      color: #39ff14;
     }
 
-    .features li {
-      margin-bottom: 14px;
-      font-size: 1.15rem;
+    .feature-card p {
+      font-size: 1rem;
       color: #f4f4f4;
     }
 
-    /* Accent color for buttons or links */
+    .divider {
+      height: 1px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 40px auto;
+    }
+
     .cta-button {
-      background: linear-gradient(135deg, #00f2c3, #00c9a7); /* Mint tones */
-      color: #000;
+      display: inline-block;
+      padding: 16px 36px;
+      font-size: 1.15rem;
+      background: linear-gradient(135deg, #00dfd8, #39ff14);
+      color: white;
       text-decoration: none;
       border-radius: 12px;
       font-weight: 600;
-      padding: 16px 36px;
-      font-size: 1.15rem;
-      box-shadow: 0 4px 14px rgba(0, 242, 195, 0.4);
+      box-shadow: 0 4px 14px rgba(57, 255, 20, 0.4);
       transition: all 0.3s ease;
     }
 
     .cta-button:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 242, 195, 0.6);
-    }
-
-    .waitlist-form {
-      margin-top: 30px;
-    }
-
-    .waitlist-form input[type="email"] {
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      width: 250px;
-      max-width: 80%;
-    }
-
-    .waitlist-form button {
-      margin-left: 10px;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      background: linear-gradient(135deg, #007cf0, #00dfd8);
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .waitlist-form button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 124, 240, 0.4);
+      box-shadow: 0 8px 24px rgba(57, 255, 20, 0.5);
     }
 
     footer {
@@ -162,8 +131,12 @@
         font-size: 2.5rem;
       }
 
-      .features {
-        padding: 25px;
+      .feature-card h3 {
+        font-size: 1.2rem;
+      }
+
+      .feature-card p {
+        font-size: 0.95rem;
       }
 
       .cta-button {
@@ -179,31 +152,34 @@
     <div class="content">
       <h1>DatumSync</h1>
       <p class="tagline">Validate · Normalize · Convert · Predict — All in One Place</p>
-      <p class="subtagline">Trusted by early adopters. Built with FastAPI + Google Cloud.</p>
 
-      <section class="features">
-        <h2>Why Choose DatumSync?</h2>
-        <ul>
-          <li><strong>Validation:</strong> Instantly flag inconsistencies across datasets</li>
-          <li><strong>Normalization:</strong> Clean, scale, and harmonize input for modeling</li>
-          <li><strong>Conversion:</strong> Effortlessly shift formats — CSV ↔ Parquet ↔ JSON</li>
-          <li><strong>Prediction:</strong> Integrated ML for classification and regression</li>
-        </ul>
+      <section class="features-grid">
+        <div class="feature-card">
+          <h3>Validation</h3>
+          <p>Instantly flag inconsistencies and mismatches across datasets to ensure accuracy.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Normalization</h3>
+          <p>Clean, scale, and harmonize your input for streamlined modeling and analytics.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Conversion</h3>
+          <p>Easily convert between CSV, JSON, and Parquet with cloud-integrated processing.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Prediction</h3>
+          <p>Built-in machine learning models for classification and regression use cases.</p>
+        </div>
       </section>
 
+      <div class="divider"></div>
+
       <a href="/login" class="cta-button">Get Started with DatumSync →</a>
-
-      <!-- Optional Beta Waitlist Form -->
-      <form class="waitlist-form" action="https://formspree.io/f/your-id" method="POST">
-        <input type="email" name="email" placeholder="Join Beta – your@email.com" required>
-        <button type="submit">Join Waitlist</button>
-      </form>
-
     </div>
   </div>
 
   <footer>
-    &copy; 2025 DatumSync by Shubham Singh. All rights reserved.
+    &copy;2025 DatumSync by Shubham Singh. All rights reserved.
   </footer>
 
 </body>
