@@ -231,7 +231,7 @@
     </div>
       
     <!-- Add this inside your .main-content below stats-grid -->
-<canvas id="statsChart" style="margin-top: 40px; background-color: white; border-radius: 12px; padding: 20px;"></canvas>
+  <canvas id="statsChart" style="margin-top: 40px; background-color: white; border-radius: 12px; padding: 20px;"></canvas>
 
     <footer>
       &copy; 2025 DatumSync by Shubham Singh
@@ -250,7 +250,6 @@
       });
 
       // Chart data using Jinja variables
-      <script>
       const labels = {{ stats_by_day.dates | tojson }};
       const validationData = {{ stats_by_day.validation | tojson }};
       const normalizationData = {{ stats_by_day.normalization | tojson }};
