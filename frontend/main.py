@@ -534,12 +534,13 @@ async def reports_page(request: Request):
         return RedirectResponse("/login")
 
     db: Session = SessionLocal()
-    email = user["email"]
+    email = user["email"].lower()
     history = []
 
     # ✅ Validation Reports
-    validations = db.query(ValidationResult).filter_by(email=email).all()
-    print(f"🟡 Validation entries: {len(validations)}")
+    validations = db.query(ValidationResult).filter(
+        func.lower(ValidationResult.email) == email
+    ).all()
     for v in validations:
         history.append({
             "file": v.source_file,
@@ -552,8 +553,9 @@ async def reports_page(request: Request):
         })
 
     # ✅ Normalization Reports
-    normalizations = db.query(NormalizedFile).filter_by(email=email).all()
-    print(f"🟠 Normalization entries: {len(normalizations)}")
+    normalizations = db.query(NormalizedFile).filter(
+        func.lower(NormalizedFile.email) == email
+    ).all()
     for n in normalizations:
         history.append({
             "file": n.input_file,
@@ -566,8 +568,9 @@ async def reports_page(request: Request):
         })
 
     # ✅ Conversion Reports
-    conversions = db.query(ConvertedFile).filter_by(email=email).all()
-    print(f"🔵 Conversion entries: {len(conversions)}")
+    conversions = db.query(ConvertedFile).filter(
+        func.lower(ConvertedFile.email) == email
+    ).all()
     for c in conversions:
         history.append({
             "file": c.original_file,
@@ -580,8 +583,9 @@ async def reports_page(request: Request):
         })
 
     # ✅ Prediction Reports
-    predictions = db.query(PredictionResult).filter_by(email=email).all()
-    print(f"🟣 Prediction entries: {len(predictions)}")
+    predictions = db.query(PredictionResult).filter(
+        func.lower(PredictionResult.email) == email
+    ).all()
     for p in predictions:
         history.append({
             "file": p.file_path,
@@ -594,8 +598,9 @@ async def reports_page(request: Request):
         })
 
     # ✅ Profiling Reports
-    profiles = db.query(ProfileResult).filter_by(email=email).all()
-    print(f"🟢 Profiling entries: {len(profiles)}")
+    profiles = db.query(ProfileResult).filter(
+        func.lower(ProfileResult.email) == email
+    ).all()
     for pr in profiles:
         history.append({
             "file": pr.input_file,
@@ -609,13 +614,7 @@ async def reports_page(request: Request):
 
     db.close()
 
-    print("📊 Total reports collected:", len(history))
-
-    # ✅ Sort by recent activity
-    try:
-        history.sort(key=lambda x: x["created_at"] or datetime.min, reverse=True)
-    except Exception as e:
-        print("⚠️ Error sorting history:", e)
+    history.sort(key=lambda x: x["created_at"] or datetime.min, reverse=True)
 
     return templates.TemplateResponse("reports.html", {
         "request": request,
