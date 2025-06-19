@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, UploadFile, File, Form
+from fastapi import FastAPI, Request, UploadFile, File, Form, Depends
 from fastapi.responses import JSONResponse,HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from authlib.integrations.starlette_client import OAuth
@@ -12,6 +12,7 @@ from models import Base, User, ConvertedFile, ValidationResult, NormalizedFile, 
 from google.cloud import storage
 import uuid
 import requests
+from sqlalchemy import func, cast, Date
 
 
 # ✅ Load environment variables
@@ -41,6 +42,42 @@ oauth.register(
 
 BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
 CLOUD_RUN_URL = "https://datumsync-481763043227.asia-south1.run.app"
+
+def get_dashboard_stats(db: Session, email: str):
+    return {
+        "validation": db.query(func.count(ValidationResult.id)).filter(ValidationResult.email == email).scalar(),
+        "normalization": db.query(func.count(NormalizedFile.id)).filter(NormalizedFile.email == email).scalar(),
+        "conversion": db.query(func.count(ConvertedFile.id)).filter(ConvertedFile.email == email).scalar(),
+        "prediction": db.query(func.count(PredictionResult.id)).filter(PredictionResult.email == email).scalar(),
+        "history": db.query(func.count(ValidationResult.id)).filter(ValidationResult.email == email).scalar() +
+                   db.query(func.count(NormalizedFile.id)).filter(NormalizedFile.email == email).scalar() +
+                   db.query(func.count(ConvertedFile.id)).filter(ConvertedFile.email == email).scalar() +
+                   db.query(func.count(PredictionResult.id)).filter(PredictionResult.email == email).scalar()
+    }
+
+def get_weekly_stats(db: Session, email: str):
+    today = datetime.utcnow().date()
+    past_7_days = [(today - timedelta(days=i)) for i in reversed(range(7))]
+    dates_iso = [d.isoformat() for d in past_7_days]
+
+    def query_daywise(model):
+        results = (
+            db.query(cast(model.created_at, Date).label("date"), func.count().label("count"))
+            .filter(model.email == email)
+            .filter(model.created_at >= today - timedelta(days=6))
+            .group_by("date")
+            .all()
+        )
+        count_map = {row.date.isoformat(): row.count for row in results}
+        return [count_map.get(d, 0) for d in dates_iso]
+
+    return {
+        "dates": dates_iso,
+        "validation": query_daywise(ValidationResult),
+        "normalization": query_daywise(NormalizedFile),
+        "conversion": query_daywise(ConvertedFile),
+        "prediction": query_daywise(PredictionResult),
+    }
 
 # ✅ Index route
 @app.get("/", response_class=HTMLResponse)
@@ -98,24 +135,12 @@ async def dashboard(request: Request):
     if not user:
         return RedirectResponse("/login")
 
-    # Simulated total stats
-    stats = {
-        "normalization": 42,
-        "conversion": 36,
-        "prediction": 29,
-        "validation": 51,
-        "history": 60
-    }
-
-    # Simulated day-wise data for the last 7 days
-    today = datetime.utcnow().date()
-    stats_by_day = {
-        "dates": [(today - timedelta(days=i)).isoformat() for i in reversed(range(7))],
-        "validation":   [8, 5, 7, 6, 9, 10, 6],
-        "normalization":[4, 3, 5, 4, 6, 7, 5],
-        "conversion":   [2, 3, 3, 2, 4, 5, 4],
-        "prediction":   [1, 2, 2, 3, 4, 5, 4],
-    }
+    db = SessionLocal()
+    try:
+        stats = get_dashboard_stats(db, user["email"])
+        stats_by_day = get_weekly_stats(db, user["email"])
+    finally:
+        db.close()
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
@@ -124,6 +149,7 @@ async def dashboard(request: Request):
         "stats": stats,
         "stats_by_day": stats_by_day
     })
+
 
 # ✅ Validation Module
 @app.get("/validate", response_class=HTMLResponse)
