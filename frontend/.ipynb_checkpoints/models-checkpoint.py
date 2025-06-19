@@ -2,7 +2,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, String, Integer,DateTime
 from datetime import datetime
 import uuid
-
+from sqlalchemy.dialects.postgresql import JSONB
 Base = declarative_base()
 
 class User(Base):
@@ -54,3 +54,15 @@ class ProfileResult(Base):
     profile_url = Column(String)
     drift_url = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class PredictionResult(Base):
+    __tablename__ = "prediction_results"
+
+    id = Column(String, primary_key=True, index=True, default=lambda: uuid.uuid4().hex)
+    email = Column(String, index=True)
+    file_path = Column(String)
+    target_column = Column(String)
+    result_summary = Column(JSONB)  # Best choice for structured data
+    status = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    

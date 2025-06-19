@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import os
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import Base, User, ConvertedFile, ValidationResult, NormalizedFile, ProfileResult
+from models import Base, User, ConvertedFile, ValidationResult, NormalizedFile, ProfileResult, PredictionResult
 from google.cloud import storage
 import uuid
 import requests
@@ -386,3 +386,66 @@ async def handle_profiling(
     db.close()
 
     return RedirectResponse("/profile", status_code=303)
+
+@app.post("/predict-file")
+async def predict_file(
+    request: Request,
+    predict_file: UploadFile = File(...),
+    target: str = Form(...)  # Selected feature/column
+):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    user_email = user["email"]
+
+    # ✅ Validate file type
+    suffix = os.path.splitext(predict_file.filename)[-1].lower()
+    if suffix not in [".parquet", ".csv"]:
+        return JSONResponse(status_code=400, content={"error": "Invalid file type"})
+
+    # ✅ Upload file to GCS
+    blob_path = f"{user_email}/{uuid.uuid4().hex}_{predict_file.filename}"
+    try:
+        client = storage.Client()
+        bucket = client.bucket(BUCKET_NAME)
+        bucket.blob(blob_path).upload_from_file(predict_file.file)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": f"GCS upload failed: {str(e)}"})
+
+    # ✅ Run prediction via Cloud Run
+    try:
+        prediction_response = requests.post(
+            "https://datumsync-481763043227.asia-south1.run.app/predict",
+            json={
+                "bucket_name": BUCKET_NAME,
+                "scaled_blob_path": blob_path,
+                "target_column": target
+            }
+        )
+        prediction_response.raise_for_status()
+        prediction_result = prediction_response.json()
+    except Exception as e:
+        print("❌ Prediction error:", e)
+        return JSONResponse(status_code=500, content={"error": "Prediction failed"})
+
+    # ✅ Insert into DB
+    try:
+        db: Session = SessionLocal()
+        db_entry = PredictionResult(
+            email=user_email,
+            file_path=blob_path,
+            target_column=target,
+            result_summary=prediction_result,  # ← store full JSON
+            status="success",
+            created_at=datetime.utcnow()
+        )
+        db.add(db_entry)
+        db.commit()
+    except Exception as db_err:
+        print("⚠️ DB insert failed:", db_err)
+    finally:
+        db.close()
+
+    # ✅ Return the prediction result
+    return JSONResponse(content={"result": prediction_result})
