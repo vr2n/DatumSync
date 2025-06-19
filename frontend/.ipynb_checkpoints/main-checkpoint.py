@@ -537,8 +537,9 @@ async def reports_page(request: Request):
     email = user["email"]
     history = []
 
-    # Validation Reports
+    # ✅ Validation Reports
     validations = db.query(ValidationResult).filter_by(email=email).all()
+    print(f"🟡 Validation entries: {len(validations)}")
     for v in validations:
         history.append({
             "file": v.source_file,
@@ -546,12 +547,13 @@ async def reports_page(request: Request):
             "status": v.status,
             "created_at": v.created_at,
             "email": v.email,
-            "view": v.result_path,
+            "view": v.result_path or "#",
             "id": v.id
         })
 
-    # Normalization Reports
+    # ✅ Normalization Reports
     normalizations = db.query(NormalizedFile).filter_by(email=email).all()
+    print(f"🟠 Normalization entries: {len(normalizations)}")
     for n in normalizations:
         history.append({
             "file": n.input_file,
@@ -559,12 +561,13 @@ async def reports_page(request: Request):
             "status": n.status,
             "created_at": n.created_at,
             "email": n.email,
-            "view": n.normalized_file,
+            "view": n.normalized_file or "#",
             "id": n.id
         })
 
-    # Conversion Reports
+    # ✅ Conversion Reports
     conversions = db.query(ConvertedFile).filter_by(email=email).all()
+    print(f"🔵 Conversion entries: {len(conversions)}")
     for c in conversions:
         history.append({
             "file": c.original_file,
@@ -572,12 +575,13 @@ async def reports_page(request: Request):
             "status": "success",
             "created_at": c.created_at,
             "email": c.email,
-            "view": c.converted_path,
+            "view": c.converted_path or "#",
             "id": c.id
         })
 
-    # Prediction Reports
+    # ✅ Prediction Reports
     predictions = db.query(PredictionResult).filter_by(email=email).all()
+    print(f"🟣 Prediction entries: {len(predictions)}")
     for p in predictions:
         history.append({
             "file": p.file_path,
@@ -589,8 +593,9 @@ async def reports_page(request: Request):
             "id": p.id
         })
 
-    # Profiling Reports
+    # ✅ Profiling Reports
     profiles = db.query(ProfileResult).filter_by(email=email).all()
+    print(f"🟢 Profiling entries: {len(profiles)}")
     for pr in profiles:
         history.append({
             "file": pr.input_file,
@@ -598,14 +603,19 @@ async def reports_page(request: Request):
             "status": "success",
             "created_at": pr.created_at,
             "email": pr.email,
-            "view": pr.profile_url,
+            "view": pr.profile_url or "#",
             "id": pr.id
         })
 
     db.close()
 
-    # Sort by most recent
-    history.sort(key=lambda x: x["created_at"], reverse=True)
+    print("📊 Total reports collected:", len(history))
+
+    # ✅ Sort by recent activity
+    try:
+        history.sort(key=lambda x: x["created_at"] or datetime.min, reverse=True)
+    except Exception as e:
+        print("⚠️ Error sorting history:", e)
 
     return templates.TemplateResponse("reports.html", {
         "request": request,
