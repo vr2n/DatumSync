@@ -53,4 +53,4 @@ class ProfileResult(Base):
     input_file = Column(String, nullable=False)
     profile_url = Column(String)
     drift_url = Column(String)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
