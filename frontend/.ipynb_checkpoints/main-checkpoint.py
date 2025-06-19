@@ -328,7 +328,7 @@ async def handle_validation(
 @app.post("/normalize-file")
 async def handle_normalization(
     request: Request,
-    input_file: UploadFile = File(...)  # 👈 matches your form field name
+    input_file: UploadFile = File(...)
 ):
     user = request.session.get("user")
     if not user:
@@ -358,8 +358,23 @@ async def handle_normalization(
 
     output_path = response.json().get("output_path")
 
-    
-    
+    # ✅ Insert normalization record into DB
+    try:
+        db: Session = SessionLocal()
+        db_entry = NormalizedFile(
+            email=user_email,
+            input_file=filename,
+            normalized_file=output_path,
+            status="success",
+            created_at=datetime.utcnow()
+        )
+        db.add(db_entry)
+        db.commit()
+    except Exception as e:
+        print("❌ DB insert error (normalization):", e)
+    finally:
+        db.close()
+
     return RedirectResponse("/normalize", status_code=303)
 
 @app.post("/profile-file")
