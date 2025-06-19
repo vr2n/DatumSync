@@ -526,3 +526,89 @@ async def get_columns(request: Request):
         blob.download_to_filename(file_path)
         df = pd.read_parquet(file_path)
         return {"columns": df.columns.tolist()}
+
+@app.get("/reports", response_class=HTMLResponse)
+async def reports_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    db: Session = SessionLocal()
+    email = user["email"]
+    history = []
+
+    # Validation Reports
+    validations = db.query(ValidationResult).filter_by(email=email).all()
+    for v in validations:
+        history.append({
+            "file": v.source_file,
+            "module": "Validation",
+            "status": v.status,
+            "created_at": v.created_at,
+            "email": v.email,
+            "view": v.result_path,
+            "id": v.id
+        })
+
+    # Normalization Reports
+    normalizations = db.query(NormalizedFile).filter_by(email=email).all()
+    for n in normalizations:
+        history.append({
+            "file": n.input_file,
+            "module": "Normalization",
+            "status": n.status,
+            "created_at": n.created_at,
+            "email": n.email,
+            "view": n.normalized_file,
+            "id": n.id
+        })
+
+    # Conversion Reports
+    conversions = db.query(ConvertedFile).filter_by(email=email).all()
+    for c in conversions:
+        history.append({
+            "file": c.original_file,
+            "module": "Conversion",
+            "status": "success",
+            "created_at": c.created_at,
+            "email": c.email,
+            "view": c.converted_path,
+            "id": c.id
+        })
+
+    # Prediction Reports
+    predictions = db.query(PredictionResult).filter_by(email=email).all()
+    for p in predictions:
+        history.append({
+            "file": p.file_path,
+            "module": "Prediction",
+            "status": p.status,
+            "created_at": p.created_at,
+            "email": p.email,
+            "view": f"/view/prediction/{p.id}",
+            "id": p.id
+        })
+
+    # Profiling Reports
+    profiles = db.query(ProfileResult).filter_by(email=email).all()
+    for pr in profiles:
+        history.append({
+            "file": pr.input_file,
+            "module": "Profiling",
+            "status": "success",
+            "created_at": pr.created_at,
+            "email": pr.email,
+            "view": pr.profile_url,
+            "id": pr.id
+        })
+
+    db.close()
+
+    # Sort by most recent
+    history.sort(key=lambda x: x["created_at"], reverse=True)
+
+    return templates.TemplateResponse("reports.html", {
+        "request": request,
+        "user": user,
+        "history": history
+    })

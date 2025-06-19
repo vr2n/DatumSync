@@ -273,48 +273,36 @@
     </div>
 
     <main>
-      <h2>Auto-generated Reports History</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>File Name</th>
-            <th>Module</th>
-            <th>Status</th>
-            <th>Timestamp</th>
-            <th>Uploaded By</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Example static row - replace with dynamic backend data -->
-          <tr>
-            <td>sales_q2.csv</td>
-            <td>Prediction</td>
-            <td>✅ Completed</td>
-            <td>2025-06-14 15:40</td>
-            <td>shubham@datum.com</td>
-            <td class="actions">
-              <a href="/view/1">View</a>
-              <a href="/download/json/1">JSON</a>
-              <a href="/download/pdf/1">PDF</a>
-            </td>
-          </tr>
-          <tr>
-            <td>customers_raw.csv</td>
-            <td>Validation</td>
-            <td>✅ Completed</td>
-            <td>2025-06-14 14:02</td>
-            <td>shubham@datum.com</td>
-            <td class="actions">
-              <a href="/view/2">View</a>
-              <a href="/download/json/2">JSON</a>
-              <a href="/download/pdf/2">PDF</a>
-            </td>
-          </tr>
-          <!-- Repeat for more reports -->
-        </tbody>
-      </table>
-    </main>
+  <h2 class="text-xl font-bold mb-4">Auto-generated Reports History</h2>
+  <table class="w-full bg-white rounded shadow overflow-hidden">
+    <thead class="bg-gray-100 text-left">
+      <tr>
+        <th class="p-3">File Name</th>
+        <th class="p-3">Module</th>
+        <th class="p-3">Status</th>
+        <th class="p-3">Timestamp</th>
+        <th class="p-3">Uploaded By</th>
+        <th class="p-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in history %}
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-3 truncate">{{ report.file.split('/')[-1] }}</td>
+        <td class="p-3">{{ report.module }}</td>
+        <td class="p-3">{{ '✅ Completed' if report.status == 'success' else '⚠️ Failed' }}</td>
+        <td class="p-3">{{ report.created_at.strftime('%Y-%m-%d %H:%M') if report.created_at else '—' }}</td>
+        <td class="p-3">{{ report.email }}</td>
+        <td class="p-3 space-x-2">
+          <a href="{{ report.view }}" class="text-blue-600 hover:underline">View</a>
+          <a href="/download/json/{{ report.id }}" class="text-green-600 hover:underline">JSON</a>
+          <a href="/download/pdf/{{ report.id }}" class="text-red-600 hover:underline">PDF</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</main>
 
     <footer>
       &copy; 2025 DatumSync by Shubham Singh
