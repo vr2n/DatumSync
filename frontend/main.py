@@ -387,24 +387,35 @@ async def handle_profiling(
 
     return RedirectResponse("/profile", status_code=303)
 
+@app.post("/upload-temp")
+async def upload_temp_file(predict_file: UploadFile = File(...)):
+    user_email = "anonymous"  # Update with real user session if needed
+    filename = f"{user_email}/{uuid.uuid4().hex}_{predict_file.filename}"
+
+    try:
+        client = storage.Client()
+        bucket = client.bucket(BUCKET_NAME)
+        bucket.blob(filename).upload_from_file(predict_file.file)
+        return {"bucket_name": BUCKET_NAME, "blob_path": filename}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"GCS upload failed: {str(e)}")
+
+
 @app.post("/predict-file")
 async def predict_file(
     request: Request,
     predict_file: UploadFile = File(...),
-    target: str = Form(...)  # Selected feature/column
+    target: str = Form(...)
 ):
     user = request.session.get("user")
     if not user:
         return RedirectResponse("/login")
 
     user_email = user["email"]
-
-    # ✅ Validate file type
     suffix = os.path.splitext(predict_file.filename)[-1].lower()
     if suffix not in [".parquet", ".csv"]:
         return JSONResponse(status_code=400, content={"error": "Invalid file type"})
 
-    # ✅ Upload file to GCS
     blob_path = f"{user_email}/{uuid.uuid4().hex}_{predict_file.filename}"
     try:
         client = storage.Client()
@@ -413,10 +424,9 @@ async def predict_file(
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": f"GCS upload failed: {str(e)}"})
 
-    # ✅ Run prediction via Cloud Run
     try:
         prediction_response = requests.post(
-            "https://datumsync-481763043227.asia-south1.run.app/predict",
+            f"{CLOUD_RUN_URL}/predict",
             json={
                 "bucket_name": BUCKET_NAME,
                 "scaled_blob_path": blob_path,
@@ -429,14 +439,13 @@ async def predict_file(
         print("❌ Prediction error:", e)
         return JSONResponse(status_code=500, content={"error": "Prediction failed"})
 
-    # ✅ Insert into DB
     try:
         db: Session = SessionLocal()
         db_entry = PredictionResult(
             email=user_email,
             file_path=blob_path,
             target_column=target,
-            result_summary=prediction_result,  # ← store full JSON
+            result_summary=prediction_result,
             status="success",
             created_at=datetime.utcnow()
         )
@@ -447,5 +456,32 @@ async def predict_file(
     finally:
         db.close()
 
-    # ✅ Return the prediction result
     return JSONResponse(content={"result": prediction_result})
+
+
+@app.post("/columns")
+async def get_columns(request: Request):
+    data = await request.json()
+    bucket_name = data.get("bucket_name")
+    scaled_blob_path = data.get("scaled_blob_path")
+
+    if not bucket_name or not scaled_blob_path:
+        return JSONResponse(status_code=400, content={"error": "Missing 'bucket_name' or 'scaled_blob_path'"})
+
+    def file_exists(bucket, name):
+        return storage.Client().bucket(bucket).blob(name).exists()
+
+    if not file_exists(bucket_name, scaled_blob_path):
+        return JSONResponse(status_code=404, content={"error": "File not found in GCS"})
+
+    import pandas as pd
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        file_path = os.path.join(tmpdir, "temp.parquet")
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+        blob = bucket.blob(scaled_blob_path)
+        blob.download_to_filename(file_path)
+        df = pd.read_parquet(file_path)
+        return {"columns": df.columns.tolist()}

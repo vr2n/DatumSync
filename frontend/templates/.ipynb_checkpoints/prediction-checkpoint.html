@@ -313,19 +313,19 @@
         </div>
 
         <div class="right">
-          <h2>Upload File for Prediction</h2>
-          <form id="predictForm" enctype="multipart/form-data">
-          <label for="predictFile">Upload Normalized File:</label>
-          <input type="file" id="predictFile" name="predict_file" accept=".csv,.parquet" required />
+      <h2>Upload File for Prediction</h2>
+      <form id="predictForm" enctype="multipart/form-data">
+        <label for="predictFile">Upload Normalized File:</label>
+        <input type="file" id="predictFile" name="predict_file" accept=".csv,.parquet" required />
 
-          <label for="target">Select Prediction Target:</label>
-          <select id="target" name="target" required>
-            <option value="">-- Upload a file to load features --</option>
-          </select>
+        <label for="target">Select Prediction Target:</label>
+        <select id="target" name="target" required>
+          <option value="">-- Upload a file to load features --</option>
+        </select>
 
-          <button type="submit" class="profile-button" disabled> Run Prediction</button>
-        </form>
-        </div>
+        <button type="submit" class="profile-button" id="predictBtn" disabled>Run Prediction</button>
+      </form>
+    </div>
       </div>
     </main>
 
@@ -348,91 +348,78 @@
         }
       });
     </script>
-        <script>
-      const predictForm = document.getElementById('predictForm');
+     <script>
       const fileInput = document.getElementById('predictFile');
       const targetSelect = document.getElementById('target');
-      const submitButton = predictForm.querySelector('button');
+      const predictBtn = document.getElementById('predictBtn');
+      let tempBlobPath = null;
 
-      let blobPath = '';
-      let bucketName = '';
-
-      // Upload file and get GCS blob path
-      fileInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
         if (!file) return;
 
-        targetSelect.innerHTML = `<option>Loading features...</option>`;
-        submitButton.disabled = true;
+        predictBtn.disabled = true;
+        targetSelect.innerHTML = '<option>Loading columns...</option>';
 
         const formData = new FormData();
-        formData.append("predict_file", file);
+        formData.append('predict_file', file);
 
-        // Step 1: Upload file to backend
-        const uploadResp = await fetch("/upload-parquet", {
-          method: "POST",
+        try {
+          // ✅ Upload to /upload-temp to get blob path
+          const uploadResp = await fetch('/upload-temp', {
+            method: 'POST',
+            body: formData
+          });
+
+          const uploadData = await uploadResp.json();
+          tempBlobPath = uploadData.blob_path;
+
+          // ✅ Call /columns to get features
+          const columnResp = await fetch('/columns', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              bucket_name: uploadData.bucket_name,
+              scaled_blob_path: uploadData.blob_path
+            })
+          });
+
+          const { columns } = await columnResp.json();
+
+          // ✅ Populate select
+          targetSelect.innerHTML = columns.map(col => `<option value="${col}">${col}</option>`).join('');
+          predictBtn.disabled = false;
+        } catch (err) {
+          console.error("❌ Error loading columns:", err);
+          targetSelect.innerHTML = '<option>Error loading features</option>';
+        }
+      });
+
+      // ✅ Intercept submit to append uploaded file again for prediction
+      document.getElementById('predictForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = fileInput.files[0];
+        const target = targetSelect.value;
+
+        const formData = new FormData();
+        formData.append('predict_file', file);
+        formData.append('target', target);
+
+        const response = await fetch('/predict-file', {
+          method: 'POST',
           body: formData
         });
 
-        const uploadData = await uploadResp.json();
-        if (!uploadResp.ok || !uploadData.scaled_blob_path) {
-          alert("❌ Upload failed: " + (uploadData.error || "Unknown error"));
-          return;
-        }
-
-        blobPath = uploadData.scaled_blob_path;
-        bucketName = uploadData.bucket_name;
-
-        // Step 2: Call /columns to get features
-        const colResp = await fetch("https://datumsync-481763043227.asia-south1.run.app/columns", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            bucket_name: bucketName,
-            scaled_blob_path: blobPath
-          })
-        });
-
-        const colData = await colResp.json();
-        targetSelect.innerHTML = `<option value="">-- Choose Feature --</option>`;
-
-        if (colData.columns && colData.columns.length > 0) {
-          colData.columns.forEach(col => {
-            const opt = document.createElement("option");
-            opt.value = col;
-            opt.textContent = col;
-            targetSelect.appendChild(opt);
-          });
-        } else {
-          targetSelect.innerHTML = `<option value="">⚠️ No features found</option>`;
-        }
-
-        submitButton.disabled = false;
-      });
-
-      // On submit, send file and selected target column
-      predictForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const selectedTarget = targetSelect.value;
-        if (!selectedTarget) {
-          alert("Please select a target column.");
-          return;
-        }
-
-        // Step 3: Send prediction request
-        const response = await fetch("/predict-file", {
-          method: "POST",
-          body: new URLSearchParams({
-            target: selectedTarget
-          }),
-          // File already uploaded, only sending target
-        });
-
         const result = await response.json();
-        alert("✅ Prediction result:\n" + JSON.stringify(result.result, null, 2));
+        if (response.ok) {
+          alert("✅ Prediction Complete!\nCheck console for output.");
+          console.log(result);
+        } else {
+          alert("❌ Prediction failed.");
+          console.error(result);
+        }
       });
     </script>
-
+        
 </body>
 </html>
