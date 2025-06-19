@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, Integer,DateTime
 from datetime import datetime
 import uuid
 
@@ -33,4 +33,14 @@ class ValidationResult(Base):
     target_file = Column(String, nullable=False)
     result_path = Column(String, nullable=False)
     status = Column(String, nullable=False, default="success")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+class NormalizedFile(Base):
+    __tablename__ = "normalized_files"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, nullable=False)
+    input_file = Column(String, nullable=False)
+    normalized_file = Column(String, nullable=False)
+    status = Column(String, default="success")
     created_at = Column(DateTime, default=datetime.utcnow)

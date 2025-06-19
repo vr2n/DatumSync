@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import os
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import Base, User, ConvertedFile, ValidationResult
+from models import Base, User, ConvertedFile, ValidationResult, NormalizedFile
 from google.cloud import storage
 import uuid
 import requests
@@ -298,3 +298,40 @@ async def handle_validation(
     db.close()
 
     return RedirectResponse("/validate", status_code=303)
+
+@app.post("/normalize-file")
+async def handle_normalization(
+    request: Request,
+    input_file: UploadFile = File(...)  # 👈 matches your form field name
+):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    user_email = user["email"]
+    filename = f"{user_email}/{uuid.uuid4().hex}_{input_file.filename}"
+
+    # ✅ Upload to GCS
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(filename)
+    blob.upload_from_file(input_file.file)
+
+    # ✅ Call Cloud Run normalization endpoint
+    payload = {
+        "bucket": BUCKET_NAME,
+        "name": filename
+    }
+
+    try:
+        response = requests.post(f"{CLOUD_RUN_URL}/normalize", json=payload)
+        response.raise_for_status()
+    except Exception as e:
+        print("❌ Normalization error:", e)
+        return RedirectResponse("/normalize?error=true", status_code=303)
+
+    output_path = response.json().get("output_path")
+
+    
+    
+    return RedirectResponse("/normalize", status_code=303)
