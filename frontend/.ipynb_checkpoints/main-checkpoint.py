@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import os
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import Base, User, ConvertedFile, ValidationResult, NormalizedFile
+from models import Base, User, ConvertedFile, ValidationResult, NormalizedFile, ProfilingResult
 from google.cloud import storage
 import uuid
 import requests
@@ -335,3 +335,54 @@ async def handle_normalization(
     
     
     return RedirectResponse("/normalize", status_code=303)
+
+@app.post("/profile-file")
+async def handle_profiling(
+    request: Request,
+    profile_file: UploadFile = File(...)
+):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    user_email = user["email"]
+    filename = f"{user_email}/{uuid.uuid4().hex}_{profile_file.filename}"
+
+    # ✅ Upload the file to GCS
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(filename)
+    blob.upload_from_file(profile_file.file)
+
+    # ✅ Call Cloud Run profiling endpoint
+    payload = {
+        "bucket_name": BUCKET_NAME,
+        "current_blob": filename,
+        "baseline_blob": None  # optional, you can extend later
+    }
+
+    try:
+        response = requests.post(f"{CLOUD_RUN_URL}/profile", json=payload)
+        response.raise_for_status()
+        result = response.json()
+    except Exception as e:
+        print("❌ Profiling error:", e)
+        return RedirectResponse("/profile", status_code=303)
+
+    # ✅ Save result to Supabase DB
+    profile_url = result.get("profile_url")
+    drift_url = result.get("drift_url")
+
+    db: Session = SessionLocal()
+    db_entry = ProfileResult(
+        email=user_email,
+        input_file=filename,
+        profile_url=profile_url,
+        drift_url=drift_url,
+        created_at=datetime.utcnow()
+    )
+    db.add(db_entry)
+    db.commit()
+    db.close()
+
+    return RedirectResponse("/profile", status_code=303)

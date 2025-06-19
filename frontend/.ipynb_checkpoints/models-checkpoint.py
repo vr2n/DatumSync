@@ -44,3 +44,13 @@ class NormalizedFile(Base):
     normalized_file = Column(String, nullable=False)
     status = Column(String, default="success")
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+class ProfileResult(Base):
+    __tablename__ = "profiling_results"
+
+    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    email = Column(String, nullable=False)
+    input_file = Column(String, nullable=False)
+    profile_url = Column(String)
+    drift_url = Column(String)
+    created_at = Column(DateTime)
