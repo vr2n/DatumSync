@@ -157,6 +157,24 @@ This project is deployed via:
 * 📃 **Supabase (PostgreSQL DB & auth)**
 
 ---
+## 🛡️ Uptime & Reliability
+To ensure continuous availability of the application hosted on a free-tier Render instance, a proactive uptime monitoring solution was implemented:
+
+* **🧩 Strategy**
+/health Endpoint
+A lightweight health-check endpoint (GET /health) was added to confirm app readiness and ensure it responds with HTTP 200 OK.
+
+* **🛠️ Uptime Monitoring with UptimeRobot**
+UptimeRobot is used to ping the /health endpoint every 5 minutes, preventing the service from entering cold-start or sleep mode (a common limitation of free-tier platforms).
+
+* **🧠 Benefit**
+This setup ensures real-time reliability, faster response times, and uninterrupted user experience — all without requiring paid infrastructure.
+```bash
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+```
+---
 
 ## ✅ What's Unique?
 
