@@ -183,7 +183,7 @@ This project is deployed via:
 **Shubham Singh**
 MSc Data Science, University of Nottingham
 📧 [shubhamsinghvr2n@gmail.com](mailto:shubhamsinghvr2n@gmail.com)
-🔗 [LinkedIn](https://www.linkedin.com/in/shubhamvr2n) | [GitHub](https://github.com/yourusername)
+🔗 [LinkedIn](https://www.linkedin.com/in/shubhamsinghvr) | [GitHub](https://github.com/vr2n)
 
 ---
 
