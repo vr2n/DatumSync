@@ -13,6 +13,8 @@ from google.cloud import storage
 import uuid
 import requests
 from sqlalchemy import func, cast, Date
+from stripe_utils import create_checkout_session
+
 
 
 # ✅ Load environment variables
@@ -223,6 +225,42 @@ async def settings_page(request: Request):
     if not user:
         return RedirectResponse("/login")
     return templates.TemplateResponse("settings.html", {"request": request, "user": user})
+
+#✅ Subscription
+@app.get("/subscription", response_class=HTMLResponse)
+async def subscription_page(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    return templates.TemplateResponse("subscription.html", {
+        "request": request,
+        "user": user
+    })
+
+@app.get("/subscription/success", response_class=HTMLResponse)
+async def stripe_success(request: Request):
+    user = request.session.get("user")
+    return templates.TemplateResponse("subscription_success.html", {"request": request, "user": user})
+
+@app.get("/subscription/cancel", response_class=HTMLResponse)
+async def stripe_cancel(request: Request):
+    user = request.session.get("user")
+    return templates.TemplateResponse("subscription_cancel.html", {"request": request, "user": user})
+
+
+@app.get("/subscribe/pro")
+async def subscribe_pro(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse("/login")
+
+    email = user["email"]
+    session_url = create_checkout_session(email)
+
+    if session_url:
+        return RedirectResponse(session_url)
+    return {"error": "Unable to create Stripe checkout session"}
 
 @app.post("/convert-file")
 async def handle_conversion(

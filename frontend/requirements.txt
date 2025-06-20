@@ -13,3 +13,4 @@ python-multipart
 requests
 pandas
 pyarrow
+stripe
