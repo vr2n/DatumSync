@@ -80,6 +80,9 @@ def get_weekly_stats(db: Session, email: str):
         "conversion": query_daywise(ConvertedFile),
         "prediction": query_daywise(PredictionResult),
     }
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
 # ✅ Index route
 @app.get("/", response_class=HTMLResponse)
