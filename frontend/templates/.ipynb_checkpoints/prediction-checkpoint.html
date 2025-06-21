@@ -5,32 +5,25 @@
   <title>Prediction | DatumSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+   <style> * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
     }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
-      color: #fff;
+      background: #ffffff;
+      color: #111;
       display: flex;
       min-height: 100vh;
-    }
-
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      overflow-x: hidden;
     }
 
     .sidebar {
       width: 220px;
-      background-color: rgba(0, 0, 0, 0.85);
+      flex-shrink: 0;
+      background: linear-gradient(to bottom, #1e3a8a, #3b82f6);
       padding: 30px 15px;
       display: flex;
       flex-direction: column;
@@ -38,14 +31,14 @@
     }
 
     .sidebar h2 {
-      color: #39ff14;
       text-align: center;
+      color: #ffffff;
       font-size: 1.5rem;
       margin-bottom: 30px;
     }
 
     .sidebar a {
-      color: #ccc;
+      color: #ffffff;
       text-decoration: none;
       padding: 10px 15px;
       border-radius: 8px;
@@ -54,91 +47,101 @@
 
     .sidebar a:hover,
     .sidebar a.active {
-      background: #39ff14;
-      color: #000;
-      font-weight: 600;
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .main-content {
       flex: 1;
+      padding: 30px;
       display: flex;
       flex-direction: column;
+      min-width: 0;
+      background: #ffffff;
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 30px;
+      margin-bottom: 30px;
     }
 
     .header h1 {
       font-size: 2em;
-      background: linear-gradient(90deg, #39ff14, #00dfd8);
+      background: linear-gradient(to right, #1e3a8a, #3b82f6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .profile-dropdown {
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       position: relative;
     }
 
-    .profile-button {
-      background: #111;
-      border: 1px solid #39ff14;
-      color: #39ff14;
-      padding: 10px 16px;
-      border-radius: 20px;
+    .user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #1e3a8a;
       cursor: pointer;
-      font-weight: 500;
-      transition: 0.3s;
     }
 
-    .profile-button:hover {
-      background-color: #39ff14;
-      color: #000;
+    .dropdown-toggle {
+      cursor: pointer;
+      font-weight: 600;
+      color: #111;
     }
 
-    .dropdown-content {
-      display: none;
+    .dropdown-toggle::after {
+      content: " ▼";
+      font-size: 0.75rem;
+    }
+
+    .dropdown-menu {
       position: absolute;
+      top: 120%;
       right: 0;
-      background-color: #111;
-      border: 1px solid #333;
-      border-radius: 8px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-      z-index: 1;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: none;
+      min-width: 160px;
+      z-index: 100;
     }
 
-    .dropdown-content a {
-      color: white;
-      padding: 12px 16px;
+    .dropdown-menu a {
       display: block;
+      padding: 10px 15px;
       text-decoration: none;
+      color: #1e3a8a;
     }
 
-    .dropdown-content a:hover {
-      background-color: #222;
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
     }
 
-    .profile-dropdown:hover .dropdown-content {
+    .dropdown-menu.show {
       display: block;
     }
 
     main {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: #f9f9f9;
       padding: 40px;
       margin: 20px;
       border-radius: 16px;
       max-width: 1100px;
       align-self: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     main h2 {
       margin-bottom: 20px;
       font-size: 1.5em;
-      color: #39ff14;
+      color: #1e3a8a;
     }
 
     .container {
@@ -154,6 +157,7 @@
 
     ul {
       padding-left: 20px;
+      color: #333;
     }
 
     li {
@@ -163,17 +167,17 @@
     label {
       display: block;
       margin-bottom: 8px;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     input[type="file"],
     select {
       width: 100%;
       padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #39ff14;
-      background-color: #111;
-      color: #fff;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      color: #111;
       margin-bottom: 16px;
     }
 
@@ -183,12 +187,24 @@
 
     button.profile-button {
       margin-top: 10px;
+      padding: 12px 20px;
+      background-color: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button.profile-button:hover {
+      background-color: #2563eb;
     }
 
     .back-link {
       display: inline-block;
       margin-top: 20px;
-      color: #00dfd8;
+      color: #2563eb;
       text-decoration: none;
       font-weight: 500;
     }
@@ -196,72 +212,16 @@
     .back-link:hover {
       text-decoration: underline;
     }
-      .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: relative;
-    }
-
-    .user-info img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 2px solid #fff;
-      cursor: pointer;
-    }
-
-    .user-name-dropdown {
-      position: relative;
-    }
-
-    .dropdown-toggle {
-      cursor: pointer;
-    }
-
-    .dropdown-toggle::after {
-      content: " ▼";
-      font-size: 0.75rem;
-    }
-
-    .dropdown-menu {
-      position: absolute;
-      top: 120%;
-      right: 0;
-      background: rgba(0, 0, 0, 0.95);
-      border: 1px solid #444;
-      border-radius: 6px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      display: none;
-      min-width: 160px;
-      z-index: 100;
-    }
-
-    .dropdown-menu a {
-      display: block;
-      padding: 10px 15px;
-      text-decoration: none;
-      color: #fff;
-    }
-
-    .dropdown-menu a:hover {
-      background-color: #e6e6e6;
-    }
-
-    .dropdown-menu.show {
-      display: block;
-    }
-
-
 
     footer {
       margin-top: auto;
       text-align: center;
       font-size: 0.9em;
-      color: #ccc;
+      color: #777;
       padding: 20px;
     }
-  </style>
+    </style>
+
 </head>
 <body>
   <nav class="sidebar">

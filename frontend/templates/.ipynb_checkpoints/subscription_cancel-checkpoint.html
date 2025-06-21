@@ -6,63 +6,58 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: center;
-    }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f9f9f9;
+  color: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+}
 
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+.card {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
 
-    .card {
-      background-color: rgba(255, 255, 255, 0.05);
-      padding: 40px;
-      border-radius: 16px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #1e3a8a;
+}
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
-      color: #39ff14;
-    }
+p {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+  color: #333;
+}
 
-    p {
-      font-size: 1.2em;
-      margin-bottom: 30px;
-    }
+a {
+  background: #1e3a8a;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
 
-    a {
-      background: #39ff14;
-      color: #000;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: 0.3s ease;
-    }
+a:hover {
+  background: #3b82f6;
+}
 
-    a:hover {
-      background: #00dfd8;
-    }
   </style>
 </head>
 <body>
