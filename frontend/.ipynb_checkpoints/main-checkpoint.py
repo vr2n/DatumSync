@@ -17,6 +17,7 @@ from stripe_utils import create_checkout_session
 
 
 
+
 # ✅ Load environment variables
 load_dotenv()
 Base.metadata.create_all(bind=engine)
@@ -212,15 +213,6 @@ async def profile_page(request: Request):
         return RedirectResponse("/login")
     return templates.TemplateResponse("profiling.html", {"request": request, "user": user})
 
-# ✅ Reports Module
-@app.get("/reports", response_class=HTMLResponse)
-async def reports_page(request: Request):
-    user = request.session.get("user")
-    if not user:
-        return RedirectResponse("/login")
-
-    # Optionally add user-specific report history or stats
-    return templates.TemplateResponse("reports.html", {"request": request, "user": user})
 
 # ✅ Account Settings
 @app.get("/settings", response_class=HTMLResponse)
