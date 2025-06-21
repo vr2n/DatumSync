@@ -94,7 +94,7 @@ async def index(request: Request):
 # ✅ Google OAuth Login
 @app.get("/login")
 async def login(request: Request):
-    redirect_uri = "https://datumsync.onrender.com/auth/callback"
+    redirect_uri = os.getenv("REDIRECT_URI")
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 # ✅ Google OAuth Callback
