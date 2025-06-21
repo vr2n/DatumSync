@@ -3,8 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Login | DatumSync</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #3b82f6;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --gray: #475569;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -13,36 +21,30 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
+      background: linear-gradient(to right, #f1f5f9, #e2e8f0);
+      color: var(--dark);
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
-    }
-
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      justify-content: center;
+      padding: 20px;
     }
 
     .login-container {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 50px 60px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
       text-align: center;
-      color: #fff;
     }
 
     .login-container h1 {
-      font-size: 2em;
-      margin-bottom: 25px;
-      background: linear-gradient(90deg, #39ff14, #00dfd8);
+      font-size: 1.75rem;
+      margin-bottom: 30px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #3b82f6, #0ea5e9);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -50,7 +52,7 @@
 
     .login-btn {
       display: inline-block;
-      padding: 14px 24px;
+      padding: 14px 28px;
       background-color: #4285F4;
       color: white;
       font-size: 1rem;
@@ -71,11 +73,30 @@
       bottom: 20px;
       text-align: center;
       font-size: 0.9em;
-      color: #ccc;
+      color: var(--gray);
+      width: 100%;
+    }
+
+    @media (max-height: 600px) {
+      footer {
+        position: static;
+        margin-top: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
+      }
+
+      .login-btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
+
   <div class="login-container">
     <h1>Login to DatumSync</h1>
     <a class="login-btn" href="/login">Sign in with Google</a>
@@ -84,5 +105,6 @@
   <footer>
     &copy; 2025 DatumSync by Shubham Singh
   </footer>
+
 </body>
 </html>

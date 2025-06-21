@@ -4,8 +4,18 @@
   <meta charset="UTF-8">
   <title>DatumSync – End-to-End Data Intelligence</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DatumSync empowers teams to validate, normalize, convert, and predict data with confidence.">
+  <link rel="icon" href="favicon.ico" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #3b82f6;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --gray: #475569;
+      --radius: 10px;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -14,172 +24,166 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
     }
 
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-    }
-
-    .content {
-      max-width: 960px;
-      width: 100%;
+    header {
+      background: linear-gradient(to right, #0f172a, #1e293b);
+      color: white;
+      padding: 100px 20px 80px;
       text-align: center;
     }
 
-    h1 {
-      font-size: 3.75rem;
+    header h1 {
+      font-size: 2.75rem;
       font-weight: 700;
-      margin-bottom: 20px;
-      background: linear-gradient(90deg, #39ff14, #00dfd8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      margin-bottom: 1rem;
     }
 
-    .tagline {
-      font-size: 1.35rem;
-      font-weight: 500;
-      color: #e0e0e0;
-      margin-bottom: 50px;
+    header p {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+      max-width: 640px;
+      margin: 0 auto;
     }
 
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 30px;
-      margin-bottom: 60px;
+    .button {
+      display: inline-block;
+      margin-top: 2rem;
+      background: var(--primary);
+      color: white;
+      padding: 12px 28px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .button:hover {
+      background: #2563eb;
+    }
+
+    section {
+      max-width: 960px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: var(--dark);
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
     }
 
     .feature-card {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
+      flex: 1 1 220px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       padding: 24px;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.2s ease;
     }
 
     .feature-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 255, 140, 0.3);
     }
 
     .feature-card h3 {
-      font-size: 1.4rem;
-      margin-bottom: 12px;
-      color: #39ff14;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
     }
 
     .feature-card p {
-      font-size: 1rem;
-      color: #f4f4f4;
+      color: var(--gray);
+      font-size: 0.95rem;
     }
 
-    .divider {
-      height: 1px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.2);
-      margin: 40px auto;
+    .cta {
+      text-align: center;
+      margin-top: 60px;
     }
 
     .cta-button {
       display: inline-block;
-      padding: 16px 36px;
-      font-size: 1.15rem;
-      background: linear-gradient(135deg, #00dfd8, #39ff14);
+      padding: 14px 32px;
+      background: var(--primary);
       color: white;
-      text-decoration: none;
-      border-radius: 12px;
+      font-size: 1.1rem;
+      border-radius: var(--radius);
       font-weight: 600;
-      box-shadow: 0 4px 14px rgba(57, 255, 20, 0.4);
-      transition: all 0.3s ease;
+      text-decoration: none;
+      transition: background 0.3s ease;
     }
 
     .cta-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(57, 255, 20, 0.5);
+      background: #2563eb;
     }
 
     footer {
-      background-color: rgba(0, 0, 0, 0.5);
+      background: #e2e8f0;
       text-align: center;
-      font-size: 0.9rem;
-      color: #ccc;
       padding: 20px;
+      font-size: 0.9rem;
+      color: #475569;
     }
 
     @media (max-width: 768px) {
-      h1 {
-        font-size: 2.5rem;
+      header h1 {
+        font-size: 2.2rem;
       }
 
-      .feature-card h3 {
-        font-size: 1.2rem;
-      }
-
-      .feature-card p {
-        font-size: 0.95rem;
-      }
-
-      .cta-button {
-        padding: 14px 24px;
-        font-size: 1rem;
+      .features {
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="content">
-      <h1>DatumSync</h1>
-      <p class="tagline">Validate · Normalize · Convert · Predict — All in One Place</p>
+  <header>
+    <h1>DatumSync</h1>
+    <p>Validate · Normalize · Convert · Predict — All in One Place</p>
+  </header>
 
-      <section class="features-grid">
-        <div class="feature-card">
-          <h3>Validation</h3>
-          <p>Instantly flag inconsistencies and mismatches across datasets to ensure accuracy.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Normalization</h3>
-          <p>Clean, scale, and harmonize your input for streamlined modeling and analytics.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Conversion</h3>
-          <p>Easily convert between CSV, JSON, and Parquet with cloud-integrated processing.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Prediction</h3>
-          <p>Built-in machine learning models for classification and regression use cases.</p>
-        </div>
-      </section>
-
-      <div class="divider"></div>
-
-      <a href="/login" class="cta-button">Get Started with DatumSync →</a>
+  <section>
+    <h2>What DatumSync Offers</h2>
+    <div class="features">
+      <div class="feature-card">
+        <h3>Validation</h3>
+        <p>Instantly flag inconsistencies and mismatches across datasets to ensure accuracy.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Normalization</h3>
+        <p>Clean, scale, and harmonize your input for streamlined modeling and analytics.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Conversion</h3>
+        <p>Easily convert between CSV, JSON, Excel and Parquet with cloud-integrated processing.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Prediction</h3>
+        <p>Built-in machine learning models for classification and regression use cases.</p>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <section class="cta">
+    <h2>Ready to Elevate Your Data Confidence?</h2>
+    <a href="/login" class="cta-button">Start with DatumSync →</a>
+  </section>
 
   <footer>
-    &copy;2025 DatumSync by Shubham Singh. All rights reserved.
+    &copy; 2025 DatumSync by Shubham Singh. All rights reserved.
   </footer>
 
 </body>
