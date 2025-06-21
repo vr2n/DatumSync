@@ -207,4 +207,6 @@ MSc Data Science, University of Nottingham
 
 ## 🏁 License
 
-MIT License — free to use with attribution.
+Proprietary License — all rights reserved.  
+Unauthorized use, reproduction, or distribution is strictly prohibited.  
+See [LICENSE](./LICENSE) for full terms.
