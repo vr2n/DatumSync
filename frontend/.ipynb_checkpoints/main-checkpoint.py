@@ -39,7 +39,8 @@ oauth.register(
     authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
     access_token_url='https://oauth2.googleapis.com/token',
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={'scope': 'openid email profile'}
+    client_kwargs={'scope': 'openid email profile'},
+    redirect_uri=os.getenv("REDIRECT_URI")  # 👈 Add this
 )
 
 BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
