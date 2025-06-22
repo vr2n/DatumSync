@@ -99,7 +99,7 @@ graph TD;
 
 ## 🧪 Live Demo
 
-> 🌐 **Live URL:** [https://datumsync.onrender.com](https://datumsync.onrender.com)
+> 🌐 **Live URL:** [datumsync.vr2n.com](https://datumsync.vr2n.com)
 
 Use Google OAuth to log in and explore all modules. For demo Stripe payments, use:
 
