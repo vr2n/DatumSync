@@ -1,0 +1,54 @@
+<!-- templates/report_view.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Report: {{ report.id }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div class="max-w-4xl mx-auto py-10 px-6">
+    <h1 class="text-2xl font-bold mb-6">Report Details</h1>
+
+    <div class="bg-white rounded-xl shadow p-6 space-y-4">
+      <div>
+        <strong class="block text-gray-700">File:</strong>
+        <p class="text-sm">{{ report.file }}</p>
+      </div>
+
+      <div>
+        <strong class="block text-gray-700">Module:</strong>
+        <p class="text-sm">{{ report.module }}</p>
+      </div>
+
+      <div>
+        <strong class="block text-gray-700">Status:</strong>
+        <p class="text-sm">{{ '✅ Completed' if report.status == 'success' else '⚠️ Failed' }}</p>
+      </div>
+
+      <div>
+        <strong class="block text-gray-700">Created At:</strong>
+        <p class="text-sm">{{ report.created_at.strftime('%Y-%m-%d %H:%M') if report.created_at else '—' }}</p>
+      </div>
+
+      <div>
+        <strong class="block text-gray-700">Email:</strong>
+        <p class="text-sm">{{ report.email }}</p>
+      </div>
+
+      {% if report.details %}
+      <div>
+        <strong class="block text-gray-700">Details:</strong>
+        <pre class="text-sm bg-gray-100 p-3 rounded overflow-auto">{{ report.details | tojson(indent=2) }}</pre>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="mt-6">
+      <a href="/download/json/{{ report.id }}" class="text-blue-600 hover:underline">Download as JSON</a>
+      <span class="mx-2">|</span>
+      <a href="/reports" class="text-gray-600 hover:underline">Back to Reports</a>
+    </div>
+  </div>
+</body>
+</html>
